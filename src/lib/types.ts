@@ -1,8 +1,8 @@
 /**
- * Database type definitions
+ * Database & Domain Type Definitions
  *
- * These mirror the Supabase tables defined in 001_initial_schema.sql.
- * They provide compile-time type safety throughout the app.
+ * These mirror the Supabase tables defined in 001_initial_schema.sql
+ * and provide compile-time safety across both mock and Supabase data sources.
  */
 
 export interface Category {
@@ -41,6 +41,11 @@ export interface AnkletImage {
   size_bytes: number;
   is_primary: boolean;
   sort_order: number;
+}
+
+export interface AnkletWithImages extends Anklet {
+  images: AnkletImage[];
+  category?: Category;
 }
 
 export interface Customer {
@@ -84,6 +89,11 @@ export interface OrderItem {
   quantity: number;
 }
 
+export interface OrderWithDetails extends Order {
+  customer?: Customer;
+  items: (OrderItem & { anklet?: Anklet; primary_image?: string })[];
+}
+
 export interface Admin {
   user_id: string;
   created_at: string;
@@ -104,11 +114,32 @@ export interface SiteSetting {
   value: string;
 }
 
+export interface StorageUsageMeter {
+  usedBytes: number;
+  totalBytes: number;
+  percentage: number;
+  isWarning: boolean;
+  imageCount: number;
+}
+
+export type UserRole = "admin" | "customer" | "visitor";
+
+export interface AuthSession {
+  user: {
+    id: string;
+    email: string;
+  } | null;
+  role: UserRole;
+  customerProfile?: Customer | null;
+}
+
 /**
  * Helper: determine if an anklet is effectively out of stock.
  * Used consistently across admin panel and public site.
  */
-export function isOutOfStock(anklet: Pick<Anklet, "stock_quantity" | "manual_out_of_stock">): boolean {
+export function isOutOfStock(
+  anklet: Pick<Anklet, "stock_quantity" | "manual_out_of_stock">
+): boolean {
   return anklet.stock_quantity <= 0 || anklet.manual_out_of_stock;
 }
 
@@ -120,4 +151,15 @@ export function isLowStock(
 ): boolean {
   if (isOutOfStock(anklet)) return false; // out-of-stock takes priority
   return anklet.stock_quantity <= anklet.low_stock_threshold;
+}
+
+/**
+ * Helper: format price in Indian Rupees (INR)
+ */
+export function formatINR(amount: number): string {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(amount);
 }
