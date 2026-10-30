@@ -7,9 +7,9 @@ import { Suspense } from "react";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Anklet Varieties & Wholesale Catalog | N.K. Ornaments",
+  title: "Anklet Varieties & Wholesale Catalog | N.K. Ornaments Mathura",
   description:
-    "Explore our complete range of silver payal, bridal anklets, oxidised designs, and kids anklets with direct manufacturer rates.",
+    "Explore our complete range of German Silver payal, bridal anklets, antique oxidised designs, and daily wear anklets with direct factory trade rates.",
 };
 
 export default async function VarietiesPage() {
@@ -21,10 +21,10 @@ export default async function VarietiesPage() {
   ]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+    <div className="min-h-screen flex flex-col bg-bg-primary text-text-primary">
       <Header settings={settings} session={session} />
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <Suspense fallback={<div className="text-center py-12 text-slate-500">Loading catalog...</div>}>
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+        <Suspense fallback={<div className="text-center py-16 text-text-secondary text-sm">Loading wholesale collection...</div>}>
           <VarietiesClient
             categories={categories}
             anklets={anklets}

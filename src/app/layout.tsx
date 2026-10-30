@@ -1,19 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 import MockModeBar from "@/components/MockModeBar";
 import CartDrawer from "@/components/public/CartDrawer";
 import { CartProvider } from "@/context/CartContext";
 import { isMockMode, getCurrentAuthUser, getSiteSettings } from "@/lib/data";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
   subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -34,14 +37,14 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${cormorant.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-slate-950 text-slate-100 selection:bg-amber-500 selection:text-slate-950">
+      <body className="min-h-full flex flex-col bg-bg-primary text-text-primary selection:bg-accent selection:text-bg-primary">
         <CartProvider>
           {children}
           <CartDrawer
             session={session}
-            whatsappNumber={settings.contact_whatsapp || "+919837012345"}
+            whatsappNumber={settings.contact_whatsapp || "+919837755055"}
           />
         </CartProvider>
         <MockModeBar initialRole={session.role} isMock={isMock} />
@@ -49,4 +52,3 @@ export default async function RootLayout({
     </html>
   );
 }
-

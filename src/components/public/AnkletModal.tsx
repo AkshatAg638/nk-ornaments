@@ -48,7 +48,7 @@ export default function AnkletModal({
         window.history.pushState({}, "", url.toString());
       }
     }
-  }, [anklet]);
+  }, [anklet, searchParams]);
 
   // Handle ESC key to close
   useEffect(() => {
@@ -112,7 +112,7 @@ export default function AnkletModal({
     setOrderSuccess(true);
     setTimeout(() => {
       onClose();
-    }, 350);
+    }, 450);
   }
 
   return (
@@ -121,22 +121,22 @@ export default function AnkletModal({
       aria-modal="true"
       aria-labelledby="modal-anklet-title"
       onClick={handleDismiss}
-      className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-[#16181B]/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fade-in"
     >
       {/* Modal Container (click inside does not close) */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-slate-900 border border-slate-800 rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl relative my-auto max-h-[92vh] overflow-y-auto"
+        className="bg-surface-elevated border border-divider rounded-2xl max-w-4xl w-full p-6 sm:p-8 shadow-xl relative my-auto max-h-[92vh] overflow-y-auto text-text-primary transition-all duration-300"
       >
         {/* Close Button (X) */}
         <button
           type="button"
           onClick={handleDismiss}
-          className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-slate-950/80 hover:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition border border-slate-800"
+          className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-bg-primary hover:bg-bg-alt text-text-secondary hover:text-text-primary flex items-center justify-center transition border border-divider hover:border-accent"
           aria-label="Close dialog"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
@@ -144,22 +144,22 @@ export default function AnkletModal({
           {/* Left Column: Image Gallery */}
           <div className="space-y-4">
             {/* Primary Display */}
-            <div className="relative rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 aspect-square flex items-center justify-center group shadow-xl">
+            <div className="relative rounded-xl overflow-hidden border border-divider bg-bg-alt aspect-square flex items-center justify-center group">
               <img
                 src={activeImage.public_url}
                 alt={anklet.name}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
               />
 
               {/* Status Badge */}
               <div className="absolute top-3 left-3">
                 <span
-                  className={`px-3 py-1 rounded-full text-xs font-semibold shadow-lg ${
+                  className={`badge ${
                     isOut
-                      ? "bg-rose-500 text-white"
+                      ? "badge-out-of-stock"
                       : isLow
-                      ? "bg-amber-500 text-slate-950"
-                      : "bg-emerald-600 text-white"
+                      ? "badge-low-stock"
+                      : "badge-in-stock"
                   }`}
                 >
                   {isOut
@@ -179,10 +179,10 @@ export default function AnkletModal({
                     key={img.id}
                     type="button"
                     onClick={() => setSelectedImageIndex(idx)}
-                    className={`relative w-16 h-16 rounded-xl overflow-hidden border shrink-0 transition ${
+                    className={`relative w-16 h-16 rounded-lg overflow-hidden border shrink-0 transition ${
                       selectedImageIndex === idx
-                        ? "border-amber-400 ring-2 ring-amber-400/30 scale-105"
-                        : "border-slate-800 opacity-60 hover:opacity-100"
+                        ? "border-accent ring-1 ring-accent"
+                        : "border-divider opacity-70 hover:opacity-100"
                     }`}
                   >
                     <img
@@ -202,11 +202,11 @@ export default function AnkletModal({
               {/* Category & SKU */}
               <div className="flex items-center gap-2">
                 {anklet.category && (
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                  <span className="badge badge-category">
                     {anklet.category.name}
                   </span>
                 )}
-                <span className="text-xs font-mono text-slate-400">
+                <span className="text-caption font-mono text-text-secondary">
                   SKU: {anklet.sku}
                 </span>
               </div>
@@ -214,63 +214,64 @@ export default function AnkletModal({
               {/* Title */}
               <h1
                 id="modal-anklet-title"
-                className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug"
+                className="text-2xl sm:text-3xl font-semibold text-text-primary tracking-tight leading-snug"
+                style={{ fontFamily: "var(--font-heading)" }}
               >
                 {anklet.name}
               </h1>
 
               {/* Description */}
               {anklet.description && (
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                <p className="text-sm text-text-secondary leading-relaxed">
                   {anklet.description}
                 </p>
               )}
 
               {/* Specifications Table */}
-              <div className="bg-slate-950 rounded-2xl p-4 border border-slate-800/80 space-y-2.5 text-xs">
-                <div className="flex items-center justify-between border-b border-slate-800/60 pb-2">
-                  <span className="text-slate-400">Material:</span>
-                  <span className="font-semibold text-amber-300">{anklet.material || "German Silver"}</span>
+              <div className="bg-bg-alt/70 rounded-xl p-4 border border-divider space-y-2.5 text-xs">
+                <div className="flex items-center justify-between border-b border-divider pb-2">
+                  <span className="text-text-secondary">Material:</span>
+                  <span className="font-medium text-text-primary">{anklet.material || "German Silver"}</span>
                 </div>
-                <div className="flex items-center justify-between border-b border-slate-800/60 pb-2">
-                  <span className="text-slate-400">Weight (per pair):</span>
-                  <span className="font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+                <div className="flex items-center justify-between border-b border-divider pb-2">
+                  <span className="text-text-secondary">Weight (per pair):</span>
+                  <span className="font-semibold text-accent">
                     {anklet.weight || "Standard Weight"}
                   </span>
                 </div>
-                <div className="flex items-center justify-between border-b border-slate-800/60 pb-2">
-                  <span className="text-slate-400">Standard Length:</span>
-                  <span className="font-medium text-white">{anklet.length || "26 cm"}</span>
+                <div className="flex items-center justify-between border-b border-divider pb-2">
+                  <span className="text-text-secondary">Standard Length:</span>
+                  <span className="font-medium text-text-primary">{anklet.length || "26 cm"}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Finish / Polish:</span>
-                  <span className="font-medium text-white">{anklet.colour || "German Silver Polish"}</span>
+                  <span className="text-text-secondary">Finish / Polish:</span>
+                  <span className="font-medium text-text-primary">{anklet.colour || "German Silver Polish"}</span>
                 </div>
               </div>
 
               {/* Price Banner */}
-              <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 to-slate-900 border border-amber-500/20">
+              <div className="p-4 rounded-xl bg-bg-alt border border-divider">
                 <div className="flex items-baseline justify-between">
                   <div>
-                    <span className="text-[10px] text-slate-400 uppercase tracking-widest block font-medium">
+                    <span className="text-caption text-text-secondary uppercase tracking-widest block font-medium">
                       Direct Wholesale Rate
                     </span>
                     {canViewPrice ? (
                       <div className="flex items-baseline gap-2 mt-0.5">
-                        <span className="text-2xl font-bold text-amber-400">
+                        <span className="text-2xl font-bold text-text-primary">
                           {formatINR(anklet.wholesale_price)}
                         </span>
-                        <span className="text-xs text-slate-400">/ pair</span>
+                        <span className="text-xs text-text-secondary">/ pair</span>
                       </div>
                     ) : (
-                      <div className="mt-1 flex items-center gap-1.5 text-amber-400 font-medium text-sm">
+                      <div className="mt-1 flex items-center gap-1.5 text-accent font-medium text-sm">
                         <span>🔒 Wholesale Price Locked</span>
                       </div>
                     )}
                   </div>
 
                   {!canViewPrice && (
-                    <span className="text-[10px] text-slate-400">
+                    <span className="text-[11px] text-text-secondary">
                       Registered trade buyers only
                     </span>
                   )}
@@ -279,22 +280,22 @@ export default function AnkletModal({
             </div>
 
             {/* Bottom Actions based on user authentication */}
-            <div className="pt-4 border-t border-slate-800">
+            <div className="pt-4 border-t border-divider">
               {orderSuccess && (
-                <div className="mb-3 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-300 text-center">
+                <div className="mb-3 p-3 bg-status-in-stock-bg border border-status-in-stock/25 rounded-xl text-xs text-status-in-stock-text text-center font-medium">
                   ✓ Added {orderQuantity} pairs of {anklet.name} to order list!
                 </div>
               )}
 
               {isOut ? (
-                <div className="text-center py-2 text-xs font-semibold text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl">
+                <div className="text-center py-2.5 text-xs font-medium text-status-out-of-stock-text bg-status-out-of-stock-bg border border-status-out-of-stock/25 rounded-xl">
                   Currently Out of Stock &bull; Inquire with factory for next casting batch
                 </div>
               ) : session.role === "customer" || session.role === "admin" ? (
                 /* Customer / Admin Order Controls */
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-4">
-                    <span className="text-xs text-slate-300 font-medium">Quantity (Pairs):</span>
+                    <span className="text-xs text-text-secondary font-medium">Quantity (Pairs):</span>
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
@@ -303,7 +304,7 @@ export default function AnkletModal({
                             Math.max(1, q - 1)
                           )
                         }
-                        className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm flex items-center justify-center transition"
+                        className="w-8 h-8 rounded-lg bg-bg-primary hover:bg-bg-alt text-text-primary font-bold text-sm flex items-center justify-center transition border border-divider"
                       >
                         -
                       </button>
@@ -317,7 +318,7 @@ export default function AnkletModal({
                             Math.max(1, parseInt(e.target.value) || 1)
                           )
                         }
-                        className="w-16 px-2 py-1.5 text-center font-bold text-white bg-slate-950 border border-slate-700 rounded-lg text-xs"
+                        className="w-16 px-2 py-1.5 text-center font-semibold text-text-primary bg-bg-primary border border-divider rounded-lg text-xs focus:border-accent outline-none"
                       />
                       <button
                         type="button"
@@ -326,37 +327,70 @@ export default function AnkletModal({
                             Math.min(anklet.stock_quantity, q + 1)
                           )
                         }
-                        className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm flex items-center justify-center transition"
+                        className="w-8 h-8 rounded-lg bg-bg-primary hover:bg-bg-alt text-text-primary font-bold text-sm flex items-center justify-center transition border border-divider"
                       >
                         +
                       </button>
-                      <span className="text-xs text-slate-400">pairs</span>
+                      <span className="text-xs text-text-secondary">pairs</span>
                     </div>
                   </div>
 
                   <button
                     type="button"
                     onClick={handleAddToOrder}
-                    className="w-full py-3 px-4 rounded-xl font-bold text-xs text-slate-950 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 transition shadow-lg shadow-amber-500/20 active:scale-98"
+                    className="btn btn-primary w-full py-3.5 text-xs tracking-wide"
                   >
                     Add {orderQuantity} Pairs to Wholesale Order &bull; {formatINR(anklet.wholesale_price * orderQuantity)}
                   </button>
+
+                  <a
+                    href={`https://wa.me/919837755055?text=${encodeURIComponent(
+                      `Hello Sachin ji, I am inquiring about *${anklet.name}* (SKU: ${anklet.sku}${
+                        anklet.weight ? `, Weight: ${anklet.weight}` : ""
+                      }) on N.K. Ornaments. Could you please share the current wholesale rate and dispatch availability?`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-xs font-medium bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] border border-[#25D366]/30 transition-all duration-200"
+                  >
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                      <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.072.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824z" />
+                    </svg>
+                    <span>Inquire on WhatsApp</span>
+                  </a>
                 </div>
               ) : (
                 /* Visitor: Can add to order draft or register */
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   <button
                     type="button"
                     onClick={handleAddToOrder}
-                    className="w-full py-3 px-4 rounded-xl font-bold text-xs text-slate-950 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 transition shadow-lg shadow-amber-500/20 active:scale-98"
+                    className="btn btn-primary w-full py-3.5 text-xs tracking-wide"
                   >
                     Add {orderQuantity} Pairs to Wholesale Order Draft
                   </button>
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 px-1 pt-1">
+
+                  <a
+                    href={`https://wa.me/919837755055?text=${encodeURIComponent(
+                      `Hello Sachin ji, I am inquiring about *${anklet.name}* (SKU: ${anklet.sku}${
+                        anklet.weight ? `, Weight: ${anklet.weight}` : ""
+                      }) on N.K. Ornaments. Could you please share the current wholesale rate and dispatch availability?`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-xs font-medium bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] border border-[#25D366]/30 transition-all duration-200"
+                  >
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                      <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.072.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824z" />
+                    </svg>
+                    <span>Inquire on WhatsApp</span>
+                  </a>
+
+                  <div className="flex items-center justify-between text-[11px] text-text-secondary px-1 pt-1">
                     <span>New trade jeweler?</span>
                     <Link
                       href="/register"
-                      className="text-amber-400 hover:underline font-semibold"
+                      className="text-accent hover:underline font-semibold"
                     >
                       Register for Wholesale &rarr;
                     </Link>

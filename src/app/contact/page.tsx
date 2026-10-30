@@ -25,30 +25,36 @@ export default async function ContactPage() {
   const cleanPhone = phone.replace(/[^0-9+]/g, "");
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+    <div className="min-h-screen flex flex-col bg-bg-primary text-text-primary">
       <Header settings={settings} session={session} />
 
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 space-y-12 sm:space-y-16">
         {/* Header Hero */}
         <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <span className="text-[11px] font-semibold tracking-widest text-amber-400 uppercase">
-            Factory Trade Desk &bull; Mathura
+          <span className="badge badge-category">
+            Factory Trade Desk • Mathura
           </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+          <h1
+            className="text-3xl sm:text-5xl font-normal text-text-primary tracking-tight"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
             Connect With Our Manufacturing Hub
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-            Direct communication for retail jewellers, bullion dealers, and regional distributors across India.
+          <p className="text-sm text-text-secondary leading-relaxed prose-body mx-auto">
+            Direct communication for retail jewellers, bullion traders, and regional distributors across India seeking wholesale German Silver payal.
           </p>
         </div>
 
         {/* 2-Column: Details on left, Form on right */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
           {/* Left Details (2 cols) */}
           <div className="lg:col-span-2 space-y-6">
             {/* Quick Action Buttons */}
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4">
-              <h2 className="text-sm font-bold text-white uppercase tracking-wider">
+            <div className="card-pearl bg-bg-alt p-6 space-y-4">
+              <h2
+                className="text-lg font-medium text-text-primary uppercase tracking-wider text-xs"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
                 Instant Trade Connect
               </h2>
 
@@ -59,7 +65,7 @@ export default async function ContactPage() {
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition shadow-lg shadow-emerald-600/20"
+                  className="btn btn-primary w-full py-3 text-xs"
                 >
                   <span>💬 Chat on WhatsApp Direct</span>
                 </a>
@@ -68,7 +74,7 @@ export default async function ContactPage() {
               {cleanPhone && (
                 <a
                   href={`tel:${cleanPhone}`}
-                  className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 transition border border-slate-700"
+                  className="btn btn-outline w-full py-3 text-xs"
                 >
                   <span>📞 Call: {phone}</span>
                 </a>
@@ -76,56 +82,75 @@ export default async function ContactPage() {
             </div>
 
             {/* Address & Operational Info */}
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 text-xs">
-              <h2 className="text-sm font-bold text-white uppercase tracking-wider">
+            <div className="card-pearl bg-bg-primary p-6 space-y-4 text-xs">
+              <h2
+                className="text-sm font-semibold text-text-primary uppercase tracking-wider text-[11px]"
+              >
                 Workshop &amp; Showroom
               </h2>
 
-              <div className="space-y-3 text-slate-400">
-                <p className="flex items-start gap-3">
-                  <span className="text-amber-400 text-base shrink-0">👤</span>
-                  <span className="leading-relaxed">
-                    <strong className="text-white block font-medium">Proprietor:</strong>
-                    <span className="text-amber-300 font-semibold text-sm">Sachin Chaudhary</span>
-                  </span>
-                </p>
+              <div className="space-y-3 text-text-secondary">
+                <div className="flex items-start gap-3">
+                  <span className="text-accent text-base shrink-0">👤</span>
+                  <div className="leading-relaxed">
+                    <strong className="text-text-primary block font-medium">Proprietor:</strong>
+                    <span className="text-accent font-semibold text-sm">Sachin Chaudhary</span>
+                  </div>
+                </div>
 
-                <p className="flex items-start gap-3">
-                  <span className="text-amber-400 text-base shrink-0">📍</span>
-                  <span className="leading-relaxed">
-                    <strong className="text-white block font-medium">Factory / Showroom Address:</strong>
-                    {address}
-                  </span>
-                </p>
+                <div className="flex items-start gap-3">
+                  <span className="text-accent text-base shrink-0">📍</span>
+                  <div className="leading-relaxed">
+                    <strong className="text-text-primary block font-medium">Factory / Showroom Address:</strong>
+                    <span>{address}</span>
+                  </div>
+                </div>
 
-                <p className="flex items-start gap-3">
-                  <span className="text-amber-400 text-base shrink-0">⏰</span>
-                  <span className="leading-relaxed">
-                    <strong className="text-white block font-medium">Business Hours:</strong>
-                    Monday – Saturday: 10:00 AM – 8:30 PM IST<br />
-                    (Chowk Bazar, Mathura)
-                  </span>
-                </p>
+                <div className="flex items-start gap-3">
+                  <span className="text-accent text-base shrink-0">🕒</span>
+                  <div className="leading-relaxed">
+                    <strong className="text-text-primary block font-medium">Working Hours:</strong>
+                    <span>Monday &ndash; Saturday: 10:00 AM &ndash; 8:00 PM</span>
+                  </div>
+                </div>
 
-                <p className="flex items-start gap-3">
-                  <span className="text-amber-400 text-base shrink-0">✉️</span>
-                  <span className="leading-relaxed">
-                    <strong className="text-white block font-medium">Trade Inquiries:</strong>
-                    {email}
-                  </span>
-                </p>
+                <div className="flex items-start gap-3">
+                  <span className="text-accent text-base shrink-0">✉️</span>
+                  <div className="leading-relaxed">
+                    <strong className="text-text-primary block font-medium">Trade Desk Email:</strong>
+                    <a href={`mailto:${email}`} className="text-accent hover:underline">
+                      {email}
+                    </a>
+                  </div>
+                </div>
               </div>
+            </div>
+
+            {/* Wholesale Policy Notice */}
+            <div className="p-4 rounded-xl bg-bg-alt border border-divider text-xs space-y-1.5 text-text-secondary">
+              <span className="font-semibold text-text-primary block">
+                Wholesale Trade Supply Policy:
+              </span>
+              <p className="leading-relaxed">
+                We supply exclusively to registered retail jewelers and trade buyers. We do not retail individual single pieces to end consumers.
+              </p>
             </div>
           </div>
 
           {/* Right Form (3 cols) */}
-          <div className="lg:col-span-3 bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl">
-            <h2 className="text-lg font-bold text-white mb-1">
-              Send Wholesale Inquiry
-            </h2>
-            <p className="text-xs text-slate-400 mb-6 leading-relaxed">
-              Fill in your requirement below. We reply with sample photos, weight breakdowns, and commercial terms.
-            </p>
+          <div className="lg:col-span-3 card-pearl bg-surface-card p-6 sm:p-10 space-y-6">
+            <div className="space-y-1.5 border-b border-divider pb-4">
+              <h2
+                className="text-2xl font-normal text-text-primary"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Send a Trade Inquiry
+              </h2>
+              <p className="text-xs text-text-secondary leading-relaxed">
+                Fill in your jewelry business details below. Our factory dispatch desk in Mathura will respond promptly with current wholesale rates and sample terms.
+              </p>
+            </div>
+
             <ContactForm />
           </div>
         </div>

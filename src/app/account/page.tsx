@@ -36,7 +36,7 @@ export default async function AccountPage() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+    <div className="min-h-screen flex flex-col bg-bg-primary text-text-primary">
       <Header
         settings={settings}
         session={session}

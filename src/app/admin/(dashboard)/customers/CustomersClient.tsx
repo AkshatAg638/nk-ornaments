@@ -58,10 +58,10 @@ export default function CustomersClient({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-serif text-text-primary tracking-tight font-light">
             Wholesale Customers &amp; Retailers
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-text-secondary mt-1">
             Registered wholesale jewelry businesses, GSTIN verifications, and delivery addresses.
           </p>
         </div>
@@ -74,15 +74,15 @@ export default function CustomersClient({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by business name, GST, city, or contact..."
-          className="w-full px-3.5 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+          className="input-pearl w-full text-xs"
         />
       </div>
 
       {/* Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+      <div className="card-pearl bg-surface-card border-divider overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950/80 border-b border-slate-800 text-slate-400 font-medium">
+            <thead className="bg-bg-alt border-b border-divider text-text-secondary font-medium uppercase tracking-wider text-[11px]">
               <tr>
                 <th className="py-3.5 px-4 sm:px-6">Business &amp; GST</th>
                 <th className="py-3.5 px-4">Contact Person</th>
@@ -92,69 +92,69 @@ export default function CustomersClient({
                 <th className="py-3.5 px-4 sm:px-6 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80 text-slate-300">
+            <tbody className="divide-y divide-divider/60 text-text-primary">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-500">
+                  <td colSpan={6} className="py-12 text-center text-text-secondary">
                     No registered wholesalers match your search.
                   </td>
                 </tr>
               ) : (
                 filtered.map((cust) => (
-                  <tr key={cust.id} className="hover:bg-slate-800/40 transition">
-                    <td className="py-3 px-4 sm:px-6">
-                      <span className="font-semibold text-white block">
+                  <tr key={cust.id} className="hover:bg-bg-alt/40 transition">
+                    <td className="py-3.5 px-4 sm:px-6">
+                      <span className="font-medium text-text-primary block">
                         {cust.business_name}
                       </span>
                       {cust.gst_number ? (
-                        <span className="font-mono text-[10px] text-amber-400">
+                        <span className="font-mono text-[10px] text-accent font-medium">
                           GST: {cust.gst_number}
                         </span>
                       ) : (
-                        <span className="text-[10px] text-slate-500">
+                        <span className="text-[10px] text-text-secondary">
                           No GST provided
                         </span>
                       )}
                     </td>
 
-                    <td className="py-3 px-4">
-                      <span className="text-white block">{cust.contact_person}</span>
-                      <span className="text-[10px] text-slate-400">{cust.email}</span>
+                    <td className="py-3.5 px-4">
+                      <span className="font-medium text-text-primary block">{cust.contact_person}</span>
+                      <span className="text-[10px] text-text-secondary">{cust.email}</span>
                     </td>
 
-                    <td className="py-3 px-4 font-mono text-[11px] text-slate-300">
-                      <div>📞 {cust.phone}</div>
+                    <td className="py-3.5 px-4 font-mono text-[11px] text-text-secondary">
+                      <div className="text-text-primary">📞 {cust.phone}</div>
                       {cust.whatsapp && (
-                        <div className="text-emerald-400 text-[10px]">
+                        <div className="text-accent text-[10px] font-medium">
                           💬 {cust.whatsapp}
                         </div>
                       )}
                     </td>
 
-                    <td className="py-3 px-4 text-slate-400">
-                      <span className="text-white block">{cust.city}, {cust.state}</span>
-                      <span className="text-[10px] text-slate-500">{cust.pincode}</span>
+                    <td className="py-3.5 px-4 text-text-secondary">
+                      <span className="text-text-primary block font-medium">{cust.city}, {cust.state}</span>
+                      <span className="text-[10px] text-text-secondary">{cust.pincode}</span>
                     </td>
 
-                    <td className="py-3 px-4 text-center">
+                    <td className="py-3.5 px-4 text-center">
                       <span
-                        className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
+                        className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${
                           cust.is_disabled
-                            ? "bg-rose-500/20 text-rose-300 border border-rose-500/30"
-                            : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                            ? "bg-status-out-of-stock-bg text-status-out-of-stock border-status-out-of-stock-border"
+                            : "bg-status-in-stock-bg text-status-in-stock border-status-in-stock-border"
                         }`}
                       >
                         {cust.is_disabled ? "Disabled" : "Active"}
                       </span>
                     </td>
 
-                    <td className="py-3 px-4 sm:px-6 text-right">
+                    <td className="py-3.5 px-4 sm:px-6 text-right">
                       <button
                         onClick={() => handleToggleDisable(cust)}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition ${
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-medium border transition ${
                           cust.is_disabled
-                            ? "bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 border border-emerald-500/30"
-                            : "bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 border border-rose-500/30"
+                            ? "bg-status-in-stock-bg text-status-in-stock hover:bg-emerald-100 border-status-in-stock-border"
+                            : "bg-status-out-of-stock-bg text-status-out-of-stock hover:bg-rose-100 border-status-out-of-stock-border"
                         }`}
                       >
                         {cust.is_disabled ? "Enable Account" : "Disable Account"}

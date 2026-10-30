@@ -13,7 +13,7 @@ interface CartDrawerProps {
 
 export default function CartDrawer({
   session,
-  whatsappNumber = "+919837012345",
+  whatsappNumber = "+919837755055",
 }: CartDrawerProps) {
   const {
     items,
@@ -31,13 +31,24 @@ export default function CartDrawer({
   const [guestPhone, setGuestPhone] = useState("");
   const [guestCity, setGuestCity] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [submittedOrder, setSubmittedOrder] = useState<{
     orderNumber: string;
     whatsappUrl: string;
+    rawText: string;
+    totalPairs: number;
+    totalAmount: number;
+    totalGrams: number;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const cleanWhatsApp = whatsappNumber.replace(/[^0-9]/g, "");
+
+  function parseWeightGrams(weightStr?: string | null): number {
+    if (!weightStr) return 0;
+    const match = weightStr.match(/(\d+(?:\.\d+)?)\s*g/i);
+    return match ? parseFloat(match[1]) : 0;
+  }
 
   async function handleCheckout() {
     setError(null);
@@ -75,43 +86,74 @@ export default function CartDrawer({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to submit order");
 
-      // Build WhatsApp message for instant supplier ping
+      // Calculate total batch weight
+      let totalGrams = 0;
+      items.forEach((item) => {
+        const itemGram = parseWeightGrams(item.weight);
+        totalGrams += itemGram * item.quantity;
+      });
+
+      // Build structured WhatsApp message for instant supplier ping
       const orderNum = data.order_number || `ORD-${Date.now().toString().slice(-4)}`;
-      let waText = `*NEW WHOLESALE ORDER: ${orderNum}*\n`;
-      waText += `*Buyer:* ${
+      let waText = `*N.K. ORNAMENTS (MATHURA) — WHOLESALE ORDER ESTIMATE*\n`;
+      waText += `*Order Ref:* #${orderNum}\n`;
+      waText += `*Buyer / Firm:* ${
         session.customerProfile?.business_name || guestName || "Wholesale Buyer"
       }\n`;
       if (session.customerProfile?.city || guestCity) {
         waText += `*City:* ${session.customerProfile?.city || guestCity}\n`;
       }
-      waText += `*Phone:* ${
+      waText += `*Contact:* ${
         session.customerProfile?.phone || guestPhone || "N/A"
-      }\n\n`;
-      waText += `*Items Ordered:*\n`;
+      }\n`;
+      waText += `--------------------------------\n`;
+      waText += `*Order Breakdown:*\n`;
 
       items.forEach((item, idx) => {
-        waText += `${idx + 1}. ${item.name} (${item.sku})\n`;
-        waText += `   Qty: ${item.quantity} pairs @ ₹${item.wholesale_price.toLocaleString(
+        const weightTag = item.weight ? ` [${item.weight}]` : "";
+        waText += `${idx + 1}. *${item.name}* (${item.sku})${weightTag}\n`;
+        waText += `   ${item.quantity} pairs @ ₹${item.wholesale_price.toLocaleString(
           "en-IN"
         )} = ₹${(item.quantity * item.wholesale_price).toLocaleString("en-IN")}\n`;
       });
 
-      waText += `\n*Total Pairs:* ${totalItems} pairs`;
-      waText += `\n*Estimated Value:* ₹${totalAmount.toLocaleString("en-IN")}`;
-      if (note) waText += `\n*Note:* ${note}`;
-      waText += `\n\n_Please confirm stock availability & dispatch schedule for these German Silver payal designs._`;
+      waText += `--------------------------------\n`;
+      waText += `*Total Quantity:* ${totalItems} pairs\n`;
+      if (totalGrams > 0) {
+        waText += `*Total Estimated Weight:* ~${totalGrams.toLocaleString("en-IN")}g (${(
+          totalGrams / 1000
+        ).toFixed(2)} kg)\n`;
+      }
+      waText += `*Total Estimated Value:* ₹${totalAmount.toLocaleString("en-IN")}\n`;
+      if (note) waText += `*Buyer Note:* ${note}\n`;
+      waText += `\n_Please confirm stock availability and dispatch schedule from Mathura workshop._`;
 
       const whatsappUrl = `https://wa.me/${cleanWhatsApp}?text=${encodeURIComponent(
         waText
       )}`;
 
-      setSubmittedOrder({ orderNumber: orderNum, whatsappUrl });
+      setSubmittedOrder({
+        orderNumber: orderNum,
+        whatsappUrl,
+        rawText: waText,
+        totalPairs: totalItems,
+        totalAmount,
+        totalGrams,
+      });
       clearCart();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to place order");
     } finally {
       setSubmitting(false);
     }
+  }
+
+  function handleCopySummary() {
+    if (!submittedOrder) return;
+    navigator.clipboard.writeText(submittedOrder.rawText).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    });
   }
 
   if (!isOpen) return null;
@@ -121,19 +163,22 @@ export default function CartDrawer({
       {/* Backdrop */}
       <div
         onClick={() => setIsOpen(false)}
-        className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity"
+        className="absolute inset-0 bg-[#16181B]/50 backdrop-blur-sm transition-opacity"
       />
 
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-slate-900 border-l border-slate-800 shadow-2xl flex flex-col text-slate-100">
+        <div className="w-screen max-w-md bg-surface-elevated border-l border-divider shadow-2xl flex flex-col text-text-primary">
           {/* Header */}
-          <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
-            <div className="flex items-center gap-2">
-              <span className="text-xl">🛍️</span>
-              <h2 className="font-bold text-white text-base">
+          <div className="p-5 border-b border-divider flex items-center justify-between bg-bg-alt/60">
+            <div className="flex items-center gap-2.5">
+              <span className="text-lg">🛍️</span>
+              <h2
+                className="font-semibold text-text-primary text-base"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
                 Wholesale Order Draft
               </h2>
-              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              <span className="badge badge-category">
                 {totalItems} pairs
               </span>
             </div>
@@ -142,47 +187,88 @@ export default function CartDrawer({
                 setIsOpen(false);
                 setSubmittedOrder(null);
               }}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition text-sm"
+              className="w-8 h-8 rounded-full bg-bg-primary border border-divider hover:border-accent text-text-secondary hover:text-text-primary flex items-center justify-center transition"
               aria-label="Close cart"
             >
-              ✕
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
 
           {/* Body */}
           <div className="flex-1 overflow-y-auto p-5 space-y-4">
             {submittedOrder ? (
-              <div className="py-8 text-center space-y-4">
-                <div className="w-16 h-16 mx-auto rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-3xl">
+              <div className="py-6 space-y-4 text-center">
+                <div className="w-14 h-14 mx-auto rounded-full bg-[#25D366]/15 border border-[#25D366]/30 flex items-center justify-center text-[#128C7E] text-2xl font-bold">
                   ✓
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">
-                    Order Submitted Successfully!
+                  <h3
+                    className="text-xl font-semibold text-text-primary"
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
+                    Order Placed Successfully!
                   </h3>
-                  <p className="text-xs text-amber-400 font-mono mt-1">
-                    Order Ref: {submittedOrder.orderNumber}
+                  <p className="text-xs text-accent font-mono mt-1 font-semibold">
+                    Order Ref: #{submittedOrder.orderNumber}
                   </p>
-                  <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                    Our sales desk in Mathura has received your order draft. To expedite processing, send your order summary directly to our WhatsApp dispatch desk below.
+                  <p className="text-xs text-text-secondary mt-2 leading-relaxed">
+                    Your order draft has been logged in our workshop system. Send the details directly to Sachin Chaudhary on WhatsApp to confirm immediate batch dispatch.
                   </p>
                 </div>
 
-                <div className="pt-4 space-y-2">
+                {/* Summary Card */}
+                <div className="bg-bg-alt rounded-xl p-3.5 border border-divider text-left text-xs space-y-1.5 font-mono">
+                  <div className="flex justify-between text-text-secondary">
+                    <span>Total Pairs:</span>
+                    <span className="text-text-primary font-semibold font-sans">{submittedOrder.totalPairs} pairs</span>
+                  </div>
+                  {submittedOrder.totalGrams > 0 && (
+                    <div className="flex justify-between text-text-secondary">
+                      <span>Est. Batch Weight:</span>
+                      <span className="text-accent font-semibold font-sans">
+                        ~{submittedOrder.totalGrams}g ({(submittedOrder.totalGrams / 1000).toFixed(2)} kg)
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-text-secondary border-t border-divider pt-1.5">
+                    <span>Estimated Amount:</span>
+                    <span className="text-text-primary font-bold font-sans">₹{submittedOrder.totalAmount.toLocaleString("en-IN")}</span>
+                  </div>
+                </div>
+
+                {/* Direct Actions */}
+                <div className="pt-2 space-y-2.5">
                   <a
                     href={submittedOrder.whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm bg-emerald-600 hover:bg-emerald-500 text-white transition shadow-lg shadow-emerald-600/20"
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-full text-xs font-semibold bg-[#25D366] hover:bg-[#20ba59] text-white shadow-md transition-all duration-200"
                   >
-                    <span>💬 Send to WhatsApp Dispatch</span>
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                      <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.072.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824z" />
+                    </svg>
+                    <span>Send Order to Sachin Chaudhary on WhatsApp</span>
                   </a>
+
+                  <button
+                    onClick={handleCopySummary}
+                    className="w-full py-2.5 px-4 rounded-full text-xs font-medium border border-divider hover:border-accent text-text-secondary hover:text-text-primary bg-bg-primary transition flex items-center justify-center gap-1.5"
+                  >
+                    {copied ? (
+                      <span className="text-[#128C7E] font-semibold">✓ Order Summary Copied!</span>
+                    ) : (
+                      <span>📋 Copy Order Summary</span>
+                    )}
+                  </button>
+
                   <button
                     onClick={() => {
                       setSubmittedOrder(null);
                       setIsOpen(false);
                     }}
-                    className="w-full py-2.5 text-xs text-slate-400 hover:text-white"
+                    className="btn btn-outline w-full py-2.5 text-xs"
                   >
                     Back to Catalog
                   </button>
@@ -190,19 +276,19 @@ export default function CartDrawer({
               </div>
             ) : items.length === 0 ? (
               <div className="py-16 text-center space-y-3">
-                <div className="w-14 h-14 mx-auto rounded-full bg-slate-800/80 flex items-center justify-center text-slate-500 text-2xl">
+                <div className="w-12 h-12 mx-auto rounded-full bg-bg-alt flex items-center justify-center text-text-secondary text-xl">
                   🛒
                 </div>
-                <h3 className="text-sm font-semibold text-slate-300">
+                <h3 className="text-sm font-semibold text-text-primary">
                   Your order draft is empty
                 </h3>
-                <p className="text-xs text-slate-400 max-w-xs mx-auto">
+                <p className="text-xs text-text-secondary max-w-xs mx-auto leading-relaxed">
                   Browse our wholesale collection and add anklets with your desired quantity to generate an order invoice.
                 </p>
-                <div className="pt-2">
+                <div className="pt-3">
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="px-4 py-2 rounded-xl text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 transition"
+                    className="btn btn-outline text-xs"
                   >
                     Browse Varieties
                   </button>
@@ -211,14 +297,14 @@ export default function CartDrawer({
             ) : (
               <>
                 {/* Items List */}
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   {items.map((item) => (
                     <div
                       key={item.anklet_id}
-                      className="p-3 bg-slate-950/60 border border-slate-800/80 rounded-xl flex gap-3 items-center"
+                      className="p-3 bg-bg-primary border border-divider rounded-xl flex gap-3 items-center hover:border-accent/40 transition"
                     >
                       {/* Image Thumbnail */}
-                      <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-slate-900 border border-slate-800 flex-shrink-0">
+                      <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-bg-alt border border-divider flex-shrink-0">
                         {item.image_url ? (
                           <Image
                             src={item.image_url}
@@ -228,7 +314,7 @@ export default function CartDrawer({
                             sizes="56px"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-xs text-slate-500">
+                          <div className="w-full h-full flex items-center justify-center text-xs text-text-secondary">
                             ✨
                           </div>
                         )}
@@ -237,44 +323,45 @@ export default function CartDrawer({
                       {/* Details */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <h4 className="text-xs font-semibold text-white truncate">
+                          <h4 className="text-xs font-semibold text-text-primary truncate">
                             {item.name}
                           </h4>
                           <button
                             onClick={() => removeItem(item.anklet_id)}
-                            className="text-slate-500 hover:text-rose-400 text-xs ml-2"
+                            className="text-text-secondary hover:text-status-out-of-stock text-xs ml-2 p-1"
                             title="Remove item"
+                            aria-label="Remove item"
                           >
                             ✕
                           </button>
                         </div>
-                        <p className="text-[11px] text-amber-400/90 font-mono mt-0.5">
+                        <p className="text-[11px] text-text-secondary font-mono mt-0.5">
                           SKU: {item.sku} {item.weight ? `• ${item.weight}` : ""}
                         </p>
                         <div className="flex items-center justify-between mt-2">
-                          <span className="text-xs font-semibold text-emerald-400">
+                          <span className="text-xs font-semibold text-text-primary">
                             ₹{(item.wholesale_price * item.quantity).toLocaleString("en-IN")}
                           </span>
 
                           {/* Quantity Controls */}
-                          <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-700/80 rounded-lg px-2 py-0.5">
+                          <div className="flex items-center gap-1.5 bg-bg-alt border border-divider rounded-lg px-2 py-0.5">
                             <button
                               onClick={() =>
                                 updateQuantity(item.anklet_id, item.quantity - 1)
                               }
-                              className="text-slate-400 hover:text-white text-xs px-1"
+                              className="text-text-secondary hover:text-text-primary text-xs px-1"
                               title="Decrease"
                             >
                               -
                             </button>
-                            <span className="text-xs font-bold text-white min-w-[20px] text-center">
+                            <span className="text-xs font-semibold text-text-primary min-w-[20px] text-center">
                               {item.quantity}
                             </span>
                             <button
                               onClick={() =>
                                 updateQuantity(item.anklet_id, item.quantity + 1)
                               }
-                              className="text-slate-400 hover:text-white text-xs px-1"
+                              className="text-text-secondary hover:text-text-primary text-xs px-1"
                               title="Increase"
                             >
                               +
@@ -288,14 +375,14 @@ export default function CartDrawer({
 
                 {/* Visitor Guest Details if not logged in */}
                 {session.role === "visitor" && (
-                  <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 space-y-2.5">
+                  <div className="p-4 rounded-xl bg-bg-alt border border-divider space-y-2.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-amber-300">
+                      <span className="text-xs font-semibold text-text-primary">
                         Wholesale Buyer Details
                       </span>
                       <Link
                         href="/login?redirect=/varieties"
-                        className="text-[11px] text-amber-400 hover:underline"
+                        className="text-[11px] text-accent hover:underline font-medium"
                       >
                         Already registered? Login
                       </Link>
@@ -305,7 +392,7 @@ export default function CartDrawer({
                       placeholder="Jewelry Shop / Business Name *"
                       value={guestName}
                       onChange={(e) => setGuestName(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                      className="input-pearl text-xs"
                     />
                     <div className="grid grid-cols-2 gap-2">
                       <input
@@ -313,14 +400,14 @@ export default function CartDrawer({
                         placeholder="WhatsApp / Phone *"
                         value={guestPhone}
                         onChange={(e) => setGuestPhone(e.target.value)}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                        className="input-pearl text-xs"
                       />
                       <input
                         type="text"
                         placeholder="City / Market"
                         value={guestCity}
                         onChange={(e) => setGuestCity(e.target.value)}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                        className="input-pearl text-xs"
                       />
                     </div>
                   </div>
@@ -328,7 +415,7 @@ export default function CartDrawer({
 
                 {/* Order Special Notes */}
                 <div>
-                  <label className="block text-[11px] text-slate-400 font-medium mb-1">
+                  <label className="block text-[11px] text-text-secondary font-medium mb-1">
                     Special Instructions / Packing Note
                   </label>
                   <textarea
@@ -336,12 +423,12 @@ export default function CartDrawer({
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
                     placeholder="e.g. Any special finish/weight preferences, dispatch via transport..."
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 resize-none"
+                    className="input-pearl text-xs resize-none"
                   />
                 </div>
 
                 {error && (
-                  <p className="text-xs text-rose-400 bg-rose-500/10 p-2.5 rounded-lg border border-rose-500/20">
+                  <p className="text-xs text-status-out-of-stock-text bg-status-out-of-stock-bg p-2.5 rounded-lg border border-status-out-of-stock/25">
                     {error}
                   </p>
                 )}
@@ -351,21 +438,21 @@ export default function CartDrawer({
 
           {/* Footer Subtotal & Checkout */}
           {!submittedOrder && items.length > 0 && (
-            <div className="p-5 border-t border-slate-800 bg-slate-950/70 space-y-3">
+            <div className="p-5 border-t border-divider bg-bg-alt/70 space-y-3">
               <div className="space-y-1.5 text-xs">
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-text-secondary">
                   <span>Total Pairs:</span>
-                  <span className="font-semibold text-white">{totalItems} pairs</span>
+                  <span className="font-semibold text-text-primary">{totalItems} pairs</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="font-semibold text-slate-200">
+                  <span className="font-medium text-text-secondary">
                     Estimated Wholesale Value:
                   </span>
-                  <span className="font-bold text-amber-400">
+                  <span className="font-bold text-text-primary">
                     ₹{totalAmount.toLocaleString("en-IN")}
                   </span>
                 </div>
-                <p className="text-[10px] text-slate-500">
+                <p className="text-[10px] text-text-secondary">
                   * Final bill includes GST (3%) and standard dispatch freight from Chowk Bazar, Mathura.
                 </p>
               </div>
@@ -373,7 +460,7 @@ export default function CartDrawer({
               <button
                 onClick={handleCheckout}
                 disabled={submitting}
-                className="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 transition shadow-lg shadow-amber-500/20 disabled:opacity-50"
+                className="btn btn-primary w-full py-3.5 text-xs font-semibold tracking-wide disabled:opacity-50"
               >
                 {submitting ? "Placing Wholesale Order..." : "Confirm & Send Wholesale Order"}
               </button>

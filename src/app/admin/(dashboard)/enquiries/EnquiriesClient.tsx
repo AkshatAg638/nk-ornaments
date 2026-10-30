@@ -63,15 +63,15 @@ export default function EnquiriesClient({
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-serif text-text-primary tracking-tight font-light">
             Trade Inquiries &amp; Quotations
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-text-secondary mt-1">
             Incoming wholesale enquiries from potential jewelry retailers across India.
           </p>
         </div>
 
-        <div className="flex rounded-lg overflow-hidden border border-slate-700/80 bg-slate-900 p-0.5 self-start">
+        <div className="flex rounded-lg overflow-hidden border border-divider bg-bg-alt p-0.5 self-start">
           {[
             { id: "all", label: `All (${enquiries.length})` },
             { id: "unread", label: `Unread (${enquiries.filter((e) => !e.is_read).length})` },
@@ -82,8 +82,8 @@ export default function EnquiriesClient({
               onClick={() => setFilter(item.id as "all" | "unread" | "read")}
               className={`py-1.5 px-3 text-[11px] font-medium rounded-md transition ${
                 filter === item.id
-                  ? "bg-amber-500 text-slate-950 font-semibold"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-surface-card text-text-primary font-semibold shadow-sm border border-divider/60"
+                  : "text-text-secondary hover:text-text-primary"
               }`}
             >
               {item.label}
@@ -95,7 +95,7 @@ export default function EnquiriesClient({
       {/* Enquiries Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filtered.length === 0 ? (
-          <div className="col-span-full bg-slate-900 border border-slate-800 rounded-2xl py-12 text-center text-slate-500 text-xs">
+          <div className="col-span-full card-pearl bg-surface-card border-divider rounded-2xl py-12 text-center text-text-secondary text-xs">
             No trade inquiries found under this filter.
           </div>
         ) : (
@@ -104,40 +104,40 @@ export default function EnquiriesClient({
             return (
               <div
                 key={enq.id}
-                className={`bg-slate-900 border rounded-2xl p-5 flex flex-col justify-between transition ${
+                className={`card-pearl bg-surface-card rounded-2xl p-5 flex flex-col justify-between transition ${
                   !enq.is_read
-                    ? "border-amber-500/40 ring-1 ring-amber-500/20 shadow-lg shadow-amber-500/5"
-                    : "border-slate-800"
+                    ? "border-accent/40 ring-1 ring-accent/20 shadow-sm"
+                    : "border-divider"
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-white text-sm">
+                      <span className="font-medium text-text-primary text-sm">
                         {enq.name}
                       </span>
                       {!enq.is_read && (
-                        <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500 text-slate-950">
+                        <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-accent text-white shadow-sm">
                           NEW
                         </span>
                       )}
                     </div>
-                    <span className="text-[10px] text-slate-500">
+                    <span suppressHydrationWarning className="text-[10px] text-text-secondary font-mono">
                       {new Date(enq.created_at).toLocaleDateString()}
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 mb-3">
+                  <p className="text-xs text-text-primary leading-relaxed bg-bg-alt p-3.5 rounded-xl border border-divider mb-3 italic">
                     &ldquo;{enq.message}&rdquo;
                   </p>
 
-                  <div className="flex flex-wrap gap-3 text-xs text-slate-400">
+                  <div className="flex flex-wrap gap-3 text-xs text-text-secondary">
                     {enq.phone && <span>📞 {enq.phone}</span>}
                     {enq.email && <span>✉️ {enq.email}</span>}
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 mt-3 border-t border-slate-800/80">
+                <div className="flex items-center justify-between pt-3.5 mt-3 border-t border-divider">
                   <div className="flex items-center gap-2">
                     {cleanPhone && (
                       <a
@@ -146,7 +146,7 @@ export default function EnquiriesClient({
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-600 hover:text-white transition"
+                        className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-[#25D366]/15 text-[#128C7E] border border-[#25D366]/30 hover:bg-[#25D366]/25 transition"
                       >
                         Reply on WhatsApp
                       </a>
@@ -156,7 +156,7 @@ export default function EnquiriesClient({
                         href={`mailto:${enq.email}?subject=${encodeURIComponent(
                           "N.K. Ornaments Wholesale Inquiry"
                         )}`}
-                        className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-slate-800 text-slate-300 hover:text-white transition"
+                        className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-bg-alt border border-divider text-text-secondary hover:text-text-primary transition"
                       >
                         Email
                       </a>
@@ -166,13 +166,13 @@ export default function EnquiriesClient({
                   <div className="flex items-center gap-1.5">
                     <button
                       onClick={() => handleToggleRead(enq)}
-                      className="px-2 py-1 text-[11px] text-slate-400 hover:text-white transition"
+                      className="px-2 py-1 text-[11px] text-text-secondary hover:text-text-primary transition"
                     >
                       {enq.is_read ? "Mark Unread" : "Mark Read"}
                     </button>
                     <button
                       onClick={() => handleDelete(enq)}
-                      className="p-1 text-rose-400 hover:text-rose-300 transition"
+                      className="p-1 text-status-out-of-stock hover:text-rose-700 transition"
                       title="Delete inquiry"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

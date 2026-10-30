@@ -59,7 +59,7 @@ export default function SetupForm() {
   if (success) {
     return (
       <div className="text-center py-6 space-y-4">
-        <div className="w-12 h-12 mx-auto rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 animate-bounce">
+        <div className="w-12 h-12 mx-auto rounded-full bg-status-in-stock-bg border border-status-in-stock/25 flex items-center justify-center text-status-in-stock-text">
           <svg
             className="w-6 h-6"
             fill="none"
@@ -74,11 +74,11 @@ export default function SetupForm() {
             />
           </svg>
         </div>
-        <h2 className="text-lg font-semibold text-white">Setup Successful!</h2>
-        <p className="text-sm text-slate-300">
+        <h2 className="text-lg font-serif font-medium text-text-primary">Setup Successful!</h2>
+        <p className="text-xs text-text-secondary">
           Your administrator account has been created and this setup page is now locked.
         </p>
-        <p className="text-xs text-amber-400">
+        <p className="text-xs text-accent font-medium">
           Redirecting you to the login page...
         </p>
       </div>
@@ -87,14 +87,14 @@ export default function SetupForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 text-xs text-amber-300">
-        This is a one-time setup to create the master administrator account for N.K Ornaments.
+      <div className="bg-bg-alt border border-divider rounded-xl p-3 text-xs text-text-secondary">
+        This is a one-time setup to create the master administrator account for N.K. Ornaments.
       </div>
 
       {error && (
-        <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl p-3 text-xs text-rose-300 flex items-start gap-2">
+        <div className="bg-status-out-of-stock-bg border border-status-out-of-stock/25 rounded-xl p-3 text-xs text-status-out-of-stock-text flex items-start gap-2">
           <svg
-            className="w-4 h-4 text-rose-400 shrink-0 mt-0.5"
+            className="w-4 h-4 text-status-out-of-stock-text shrink-0 mt-0.5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -113,7 +113,7 @@ export default function SetupForm() {
       <div>
         <label
           htmlFor="email"
-          className="block text-xs font-medium text-slate-300 mb-1"
+          className="block text-xs font-medium text-text-secondary mb-1.5"
         >
           Admin Email
         </label>
@@ -124,14 +124,14 @@ export default function SetupForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="admin@nkornaments.com"
-          className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition"
+          className="input-pearl text-xs"
         />
       </div>
 
       <div>
         <label
           htmlFor="password"
-          className="block text-xs font-medium text-slate-300 mb-1"
+          className="block text-xs font-medium text-text-secondary mb-1.5"
         >
           Master Password (min 8 chars, letter + number)
         </label>
@@ -142,14 +142,14 @@ export default function SetupForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="••••••••"
-          className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition"
+          className="input-pearl text-xs"
         />
       </div>
 
       <div>
         <label
           htmlFor="confirmPassword"
-          className="block text-xs font-medium text-slate-300 mb-1"
+          className="block text-xs font-medium text-text-secondary mb-1.5"
         >
           Confirm Password
         </label>
@@ -160,19 +160,19 @@ export default function SetupForm() {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           placeholder="••••••••"
-          className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition"
+          className="input-pearl text-xs"
         />
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full mt-2 py-2.5 px-4 rounded-xl font-medium text-sm text-slate-950 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2"
+        className="btn btn-primary w-full py-3 text-xs font-semibold tracking-wide flex items-center justify-center gap-2 disabled:opacity-50"
       >
         {loading ? (
           <>
             <svg
-              className="animate-spin h-4 w-4 text-slate-950"
+              className="animate-spin h-4 w-4 text-bg-primary"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"

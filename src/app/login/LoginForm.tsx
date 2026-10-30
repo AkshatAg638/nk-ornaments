@@ -43,15 +43,15 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs">
+        <div className="p-3 rounded-xl bg-status-out-of-stock-bg border border-status-out-of-stock/25 text-status-out-of-stock-text text-xs">
           {error}
         </div>
       )}
 
       <div>
-        <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+        <label className="block text-xs font-medium text-text-secondary mb-1.5">
           Email Address
         </label>
         <input
@@ -59,19 +59,16 @@ export default function LoginForm() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="e.g. buyer@agrasilver.com"
-          className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-amber-500 transition"
+          placeholder="e.g. buyer@jewelers.com"
+          className="input-pearl text-xs"
         />
       </div>
 
       <div>
         <div className="flex items-center justify-between mb-1.5">
-          <label className="block text-xs font-semibold text-slate-300">
+          <label className="block text-xs font-medium text-text-secondary">
             Password
           </label>
-          <span className="text-[11px] text-slate-500">
-            Demo: any password in mock mode
-          </span>
         </div>
         <input
           type="password"
@@ -79,35 +76,35 @@ export default function LoginForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="••••••••"
-          className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-amber-500 transition"
+          className="input-pearl text-xs"
         />
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 transition shadow-lg shadow-amber-500/20 active:scale-[0.98] disabled:opacity-50"
+        className="btn btn-primary w-full py-3.5 text-xs font-semibold tracking-wide disabled:opacity-50"
       >
         {loading ? "Signing In..." : "Sign In to Wholesale Portal"}
       </button>
 
       <div className="pt-2 text-center space-y-3">
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-text-secondary">
           New jewelry showroom or wholesaler?{" "}
           <Link
             href="/register"
-            className="text-amber-400 hover:underline font-semibold"
+            className="text-accent hover:underline font-semibold"
           >
             Register Account &rarr;
           </Link>
         </p>
 
-        <div className="border-t border-slate-800/80 pt-3">
+        <div className="border-t border-divider pt-3">
           <Link
             href="/admin/login"
-            className="text-xs text-slate-500 hover:text-slate-300 transition"
+            className="text-xs text-text-secondary hover:text-text-primary transition"
           >
-            Staff & Administrator Login &rarr;
+            Staff &amp; Administrator Login &rarr;
           </Link>
         </div>
       </div>

@@ -285,29 +285,29 @@ export default function AnkletForm({
         <div>
           <Link
             href="/admin/anklets"
-            className="text-xs text-slate-400 hover:text-white transition flex items-center gap-1 mb-2"
+            className="text-xs text-text-secondary hover:text-text-primary transition flex items-center gap-1 mb-2"
           >
             &larr; Back to Anklets List
           </Link>
-          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-serif text-text-primary tracking-tight font-light">
             {isEditing ? `Edit Anklet: ${initialData?.name}` : "Add New Wholesale Anklet"}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Fill in specifications, upload WebP compressed photos, and configure minimum order quantities.
+          <p className="text-xs sm:text-sm text-text-secondary mt-1">
+            Fill in specifications, upload WebP compressed photos, and configure order limits.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <Link
             href="/admin/anklets"
-            className="px-3.5 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            className="btn btn-outline text-xs py-2 px-3.5"
           >
             Cancel
           </Link>
           <button
             type="submit"
             disabled={loading || compressing}
-            className="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-950 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 transition shadow-lg shadow-amber-500/20 disabled:opacity-50 active:scale-95"
+            className="btn btn-primary text-xs py-2 px-5 font-medium shadow-sm active:scale-95 disabled:opacity-50"
           >
             {loading ? "Saving..." : isEditing ? "Update Anklet" : "Publish Anklet"}
           </button>
@@ -315,8 +315,8 @@ export default function AnkletForm({
       </div>
 
       {error && (
-        <div className="bg-rose-500/10 border border-rose-500/20 rounded-2xl p-4 text-xs text-rose-300 flex items-start gap-2">
-          <span className="font-bold text-rose-400">Error:</span> {error}
+        <div className="bg-status-out-of-stock-bg border border-status-out-of-stock-border rounded-xl p-4 text-xs text-status-out-of-stock flex items-start gap-2">
+          <span className="font-semibold text-status-out-of-stock">Error:</span> {error}
         </div>
       )}
 
@@ -325,13 +325,13 @@ export default function AnkletForm({
         {/* Main Details (2 cols) */}
         <div className="lg:col-span-2 space-y-6">
           {/* Basic Info Card */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <h2 className="text-sm font-semibold text-white border-b border-slate-800 pb-3">
+          <div className="card-pearl bg-surface-card border-divider p-6 space-y-4">
+            <h2 className="text-sm font-semibold text-text-primary border-b border-divider pb-3">
               Basic Product Information
             </h2>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">
+              <label className="block text-xs font-medium text-text-secondary mb-1">
                 Anklet Name *
               </label>
               <input
@@ -340,20 +340,20 @@ export default function AnkletForm({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Royal Rajwada Kundan Pearl Heavy Bridal Payal"
-                className="w-full px-3.5 py-2 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                className="input-pearl w-full text-xs"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
+                <label className="block text-xs font-medium text-text-secondary mb-1">
                   Category *
                 </label>
                 <select
                   required
                   value={categoryId}
                   onChange={(e) => setCategoryId(e.target.value)}
-                  className="w-full px-3.5 py-2 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                  className="input-pearl w-full text-xs"
                 >
                   {categories.map((c) => (
                     <option key={c.id} value={c.id}>
@@ -364,7 +364,7 @@ export default function AnkletForm({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
+                <label className="block text-xs font-medium text-text-secondary mb-1">
                   Product SKU * (Unique)
                 </label>
                 <input
@@ -373,13 +373,13 @@ export default function AnkletForm({
                   value={sku}
                   onChange={(e) => setSku(e.target.value.toUpperCase())}
                   placeholder="e.g. NK-BR-109"
-                  className="w-full px-3.5 py-2 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-amber-300 font-mono uppercase focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                  className="input-pearl w-full text-xs font-mono uppercase text-accent font-medium"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">
+              <label className="block text-xs font-medium text-text-secondary mb-1">
                 Description
               </label>
               <textarea
@@ -387,20 +387,20 @@ export default function AnkletForm({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Handcrafted details, bell chimes, finish, and festival/bridal appeal..."
-                className="w-full px-3.5 py-2 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                className="input-pearl w-full text-xs"
               />
             </div>
           </div>
 
           {/* Technical Specifications */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <h2 className="text-sm font-semibold text-white border-b border-slate-800 pb-3">
+          <div className="card-pearl bg-surface-card border-divider p-6 space-y-4">
+            <h2 className="text-sm font-semibold text-text-primary border-b border-divider pb-3">
               Jewellery Specifications
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
+                <label className="block text-xs font-medium text-text-secondary mb-1">
                   Material (Alloy)
                 </label>
                 <input
@@ -408,12 +408,12 @@ export default function AnkletForm({
                   value={material}
                   onChange={(e) => setMaterial(e.target.value)}
                   placeholder="e.g. German Silver, Antique Oxidised White Metal"
-                  className="w-full px-3.5 py-2 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                  className="input-pearl w-full text-xs"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-amber-300 mb-1">
+                <label className="block text-xs font-medium text-text-primary mb-1">
                   ⚖️ Weight (Grams / Pair) *
                 </label>
                 <input
@@ -422,12 +422,12 @@ export default function AnkletForm({
                   value={weight}
                   onChange={(e) => setWeight(e.target.value)}
                   placeholder="e.g. 45g, 65g, 85g / pair"
-                  className="w-full px-3.5 py-2 bg-slate-950 border border-amber-500/40 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                  className="input-pearl w-full text-xs"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
+                <label className="block text-xs font-medium text-text-secondary mb-1">
                   Length
                 </label>
                 <input
@@ -435,12 +435,12 @@ export default function AnkletForm({
                   value={length}
                   onChange={(e) => setLength(e.target.value)}
                   placeholder="e.g. 26.5 cm (10.4 inches)"
-                  className="w-full px-3.5 py-2 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                  className="input-pearl w-full text-xs"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
+                <label className="block text-xs font-medium text-text-secondary mb-1">
                   Colour / Polish
                 </label>
                 <input
@@ -448,24 +448,24 @@ export default function AnkletForm({
                   value={colour}
                   onChange={(e) => setColour(e.target.value)}
                   placeholder="e.g. High Polish Silver, Oxidised Charcoal"
-                  className="w-full px-3.5 py-2 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                  className="input-pearl w-full text-xs"
                 />
               </div>
             </div>
           </div>
 
           {/* Multiple Image Upload Pipeline */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="card-pearl bg-surface-card border-divider p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-divider pb-3">
               <div>
-                <h2 className="text-sm font-semibold text-white">
+                <h2 className="text-sm font-semibold text-text-primary">
                   Product Photos (Max 4 Images)
                 </h2>
-                <p className="text-[11px] text-slate-400 mt-0.5">
+                <p className="text-[11px] text-text-secondary mt-0.5">
                   Browser automatically compresses files to WebP (max 1200px) to save Supabase free tier storage.
                 </p>
               </div>
-              <span className="text-xs font-mono text-amber-400">
+              <span className="text-xs font-mono text-accent font-medium">
                 {images.length} / 4 Uploaded
               </span>
             </div>
@@ -475,10 +475,10 @@ export default function AnkletForm({
               {images.map((img, index) => (
                 <div
                   key={img.id}
-                  className={`relative rounded-xl overflow-hidden border p-1 bg-slate-950 group ${
+                  className={`relative rounded-xl overflow-hidden border p-1 bg-bg-alt group ${
                     img.is_primary
-                      ? "border-amber-400 ring-2 ring-amber-400/20"
-                      : "border-slate-800"
+                      ? "border-accent ring-2 ring-accent/20"
+                      : "border-divider"
                   }`}
                 >
                   <img
@@ -489,23 +489,23 @@ export default function AnkletForm({
 
                   {/* Primary Badge */}
                   {img.is_primary && (
-                    <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-amber-500 text-slate-950 font-bold text-[9px] shadow">
+                    <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-accent text-white font-bold text-[9px] shadow-sm">
                       PRIMARY
                     </span>
                   )}
 
                   {/* Size chip */}
-                  <span className="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-slate-900/80 text-slate-300 font-mono text-[9px] backdrop-blur-sm">
+                  <span className="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-surface-card/90 text-text-secondary border border-divider font-mono text-[9px] backdrop-blur-sm">
                     {(img.size_bytes / 1024).toFixed(0)} KB WebP
                   </span>
 
                   {/* Overlay Actions */}
-                  <div className="absolute inset-0 bg-slate-950/70 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center gap-1.5 p-2">
+                  <div className="absolute inset-0 bg-surface-elevated/85 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center gap-1.5 p-2">
                     {!img.is_primary && (
                       <button
                         type="button"
                         onClick={() => setPrimaryImage(index)}
-                        className="w-full py-1 rounded bg-amber-500/20 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-medium text-[10px] transition"
+                        className="w-full py-1 rounded bg-accent/20 text-text-primary hover:bg-accent hover:text-white font-medium text-[10px] transition"
                       >
                         Set Primary
                       </button>
@@ -513,7 +513,7 @@ export default function AnkletForm({
                     <button
                       type="button"
                       onClick={() => removeImage(index)}
-                      className="w-full py-1 rounded bg-rose-500/20 text-rose-300 hover:bg-rose-500 hover:text-white font-medium text-[10px] transition"
+                      className="w-full py-1 rounded bg-rose-500/20 text-rose-700 hover:bg-rose-600 hover:text-white font-medium text-[10px] transition"
                     >
                       Remove
                     </button>
@@ -523,9 +523,9 @@ export default function AnkletForm({
 
               {/* Upload Drop Button */}
               {images.length < 4 && (
-                <label className="border-2 border-dashed border-slate-700/80 hover:border-amber-500/60 rounded-xl flex flex-col items-center justify-center p-4 cursor-pointer transition bg-slate-950/40 hover:bg-slate-950/80 h-28 text-center">
+                <label className="border-2 border-dashed border-divider hover:border-accent rounded-xl flex flex-col items-center justify-center p-4 cursor-pointer transition bg-bg-alt/50 hover:bg-bg-alt h-28 text-center">
                   <svg
-                    className="w-6 h-6 text-slate-400 mb-1"
+                    className="w-6 h-6 text-text-secondary mb-1"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -537,10 +537,10 @@ export default function AnkletForm({
                       d="M12 4.5v15m7.5-7.5h-15"
                     />
                   </svg>
-                  <span className="text-[11px] font-medium text-slate-300">
+                  <span className="text-[11px] font-medium text-text-primary">
                     Add Photo
                   </span>
-                  <span className="text-[9px] text-slate-500">
+                  <span className="text-[9px] text-text-secondary">
                     JPG/PNG/WEBP (&le; 5 MB)
                   </span>
                   <input
@@ -556,7 +556,7 @@ export default function AnkletForm({
             </div>
 
             {compressing && (
-              <p className="text-xs text-amber-400 animate-pulse">
+              <p className="text-xs text-accent animate-pulse font-medium">
                 Compressing images in browser to WebP format...
               </p>
             )}
@@ -566,13 +566,13 @@ export default function AnkletForm({
         {/* Pricing & Stock Column (1 col) */}
         <div className="space-y-6">
           {/* Pricing Card */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <h2 className="text-sm font-semibold text-white border-b border-slate-800 pb-3">
+          <div className="card-pearl bg-surface-card border-divider p-6 space-y-4">
+            <h2 className="text-sm font-semibold text-text-primary border-b border-divider pb-3">
               Wholesale Pricing
             </h2>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">
+              <label className="block text-xs font-medium text-text-secondary mb-1">
                 Wholesale Price (₹ INR / pair) *
               </label>
               <input
@@ -583,22 +583,22 @@ export default function AnkletForm({
                 value={wholesalePrice}
                 onChange={(e) => setWholesalePrice(e.target.value)}
                 placeholder="2500"
-                className="w-full px-3.5 py-2 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-amber-400 font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                className="input-pearl w-full text-xs font-medium text-text-primary"
               />
-              <span className="text-[10px] text-slate-500 mt-1 block">
+              <span className="text-[10px] text-text-secondary mt-1 block">
                 Wholesale rate shown to authorized buyers. No minimum order quantity restrictions required.
               </span>
             </div>
           </div>
 
           {/* Stock Logic Card */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <h2 className="text-sm font-semibold text-white border-b border-slate-800 pb-3">
+          <div className="card-pearl bg-surface-card border-divider p-6 space-y-4">
+            <h2 className="text-sm font-semibold text-text-primary border-b border-divider pb-3">
               Inventory &amp; Stock Status
             </h2>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">
+              <label className="block text-xs font-medium text-text-secondary mb-1">
                 Stock Quantity (Pairs)
               </label>
               <input
@@ -607,15 +607,15 @@ export default function AnkletForm({
                 value={stockQuantity}
                 onChange={(e) => setStockQuantity(e.target.value)}
                 placeholder="15"
-                className="w-full px-3.5 py-2 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                className="input-pearl w-full text-xs"
               />
-              <span className="text-[10px] text-slate-500 mt-1 block">
+              <span className="text-[10px] text-text-secondary mt-1 block">
                 Automatically Out of Stock when &le; 0.
               </span>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">
+              <label className="block text-xs font-medium text-text-secondary mb-1">
                 Low-Stock Threshold
               </label>
               <input
@@ -624,26 +624,26 @@ export default function AnkletForm({
                 value={lowStockThreshold}
                 onChange={(e) => setLowStockThreshold(e.target.value)}
                 placeholder="5"
-                className="w-full px-3.5 py-2 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                className="input-pearl w-full text-xs"
               />
-              <span className="text-[10px] text-slate-500 mt-1 block">
+              <span className="text-[10px] text-text-secondary mt-1 block">
                 Shows "Low Stock" badge when at or below this value.
               </span>
             </div>
 
-            <div className="pt-2 border-t border-slate-800 space-y-3">
+            <div className="pt-2 border-t border-divider space-y-3">
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={manualOutOfStock}
                   onChange={(e) => setManualOutOfStock(e.target.checked)}
-                  className="rounded text-amber-500 focus:ring-amber-500 h-4 w-4 bg-slate-950 border-slate-700"
+                  className="rounded text-accent focus:ring-accent h-4 w-4 bg-bg-primary border-divider"
                 />
                 <div>
-                  <span className="text-xs font-medium text-white block">
+                  <span className="text-xs font-medium text-text-primary block">
                     Manual Out of Stock
                   </span>
-                  <span className="text-[10px] text-slate-400 block">
+                  <span className="text-[10px] text-text-secondary block">
                     Override stock and mark as unavailable immediately.
                   </span>
                 </div>
@@ -654,13 +654,13 @@ export default function AnkletForm({
                   type="checkbox"
                   checked={isActive}
                   onChange={(e) => setIsActive(e.target.checked)}
-                  className="rounded text-amber-500 focus:ring-amber-500 h-4 w-4 bg-slate-950 border-slate-700"
+                  className="rounded text-accent focus:ring-accent h-4 w-4 bg-bg-primary border-divider"
                 />
                 <div>
-                  <span className="text-xs font-medium text-white block">
+                  <span className="text-xs font-medium text-text-primary block">
                     Product Visible on Website
                   </span>
-                  <span className="text-[10px] text-slate-400 block">
+                  <span className="text-[10px] text-text-secondary block">
                     Uncheck to temporarily hide from public view.
                   </span>
                 </div>

@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import LoginForm from "./LoginForm";
 import Header from "@/components/public/Header";
 import Footer from "@/components/public/Footer";
-import { getCurrentAuthUser, getCategories, getSiteSettings } from "@/lib/data";
+import { getCurrentAuthUser, getSiteSettings } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +19,7 @@ export default async function LoginPage() {
   ]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+    <div className="min-h-screen flex flex-col bg-bg-primary text-text-primary">
       <Header
         settings={settings}
         session={session}
@@ -28,24 +28,27 @@ export default async function LoginPage() {
       <main className="flex-1 flex items-center justify-center px-4 py-16 sm:py-24">
         <div className="w-full max-w-md">
           {/* Header */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 mb-4 shadow-lg shadow-amber-500/5 text-2xl">
-              💎
+          <div className="text-center mb-8 space-y-2">
+            <div className="w-12 h-12 mx-auto rounded-2xl bg-accent text-bg-primary flex items-center justify-center font-bold text-base shadow-sm">
+              NK
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-serif">
+            <h1
+              className="text-3xl sm:text-4xl font-normal text-text-primary tracking-tight"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
               Wholesale Portal Sign In
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400 mt-2">
+            <p className="text-xs sm:text-sm text-text-secondary">
               Access direct Mathura manufacturer rates, live stock, and order tracking.
             </p>
           </div>
 
-          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-sm">
+          <div className="card-pearl bg-surface-card p-6 sm:p-8 shadow-lg border border-divider">
             <LoginForm />
           </div>
 
-          <p className="text-center text-xs text-slate-500 mt-6">
-            Strictly wholesale B2B supply &bull; Chowk Bazar, Mathura (281001)
+          <p className="text-center text-caption text-text-secondary mt-6">
+            Direct wholesale manufacturer supply &bull; Chowk Bazar, Mathura (281001)
           </p>
         </div>
       </main>

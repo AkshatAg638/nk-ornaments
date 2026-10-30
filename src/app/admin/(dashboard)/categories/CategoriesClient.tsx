@@ -138,17 +138,17 @@ export default function CategoriesClient({
       {/* Top action row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-serif text-text-primary tracking-tight">
             Categories Management
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-text-secondary mt-1">
             Organize wholesale anklet catalog sections. Categories cannot be deleted while containing products.
           </p>
         </div>
 
         <button
           onClick={openAddModal}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-xs text-slate-950 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 transition shadow-lg shadow-amber-500/20 active:scale-95 shrink-0"
+          className="btn btn-primary text-xs py-2.5 px-4 inline-flex items-center gap-2 shrink-0"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.5v15m7.5-7.5h-15" />
@@ -164,15 +164,15 @@ export default function CategoriesClient({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search categories by name or slug..."
-          className="w-full px-3.5 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition"
+          className="input-pearl text-xs"
         />
       </div>
 
       {/* Categories Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+      <div className="card-pearl bg-surface-card border border-divider rounded-2xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950/80 border-b border-slate-800 text-slate-400 font-medium">
+            <thead className="bg-bg-alt border-b border-divider text-text-secondary font-mono">
               <tr>
                 <th className="py-3.5 px-4 sm:px-6">Category Name</th>
                 <th className="py-3.5 px-4">URL Slug</th>
@@ -181,10 +181,10 @@ export default function CategoriesClient({
                 <th className="py-3.5 px-4 sm:px-6 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80 text-slate-300">
+            <tbody className="divide-y divide-divider text-text-primary">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-slate-500">
+                  <td colSpan={5} className="py-10 text-center text-text-secondary">
                     No categories found. Click "Add New Category" above to create one.
                   </td>
                 </tr>
@@ -192,31 +192,31 @@ export default function CategoriesClient({
                 filtered.map((cat) => {
                   const count = getCount(cat.id);
                   return (
-                    <tr key={cat.id} className="hover:bg-slate-800/40 transition">
-                      <td className="py-3.5 px-4 sm:px-6 font-semibold text-white">
+                    <tr key={cat.id} className="hover:bg-bg-alt/30 transition">
+                      <td className="py-3.5 px-4 sm:px-6 font-medium text-text-primary">
                         {cat.name}
                       </td>
-                      <td className="py-3.5 px-4 font-mono text-[11px] text-amber-400">
+                      <td className="py-3.5 px-4 font-mono text-[11px] text-accent">
                         /{cat.slug}
                       </td>
-                      <td className="py-3.5 px-4 text-slate-400 max-w-xs truncate">
+                      <td className="py-3.5 px-4 text-text-secondary max-w-xs truncate">
                         {cat.description || "—"}
                       </td>
                       <td className="py-3.5 px-4 text-center">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono font-medium bg-bg-alt text-text-secondary border border-divider">
                           {count} designs
                         </span>
                       </td>
                       <td className="py-3.5 px-4 sm:px-6 text-right space-x-2">
                         <button
                           onClick={() => openEditModal(cat)}
-                          className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition text-[11px]"
+                          className="btn btn-secondary text-xs py-1 px-2.5 border border-divider"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDelete(cat)}
-                          className="px-2.5 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 transition text-[11px]"
+                          className="px-2.5 py-1 rounded-lg bg-status-out-of-stock-bg hover:bg-status-out-of-stock/20 text-status-out-of-stock-text border border-status-out-of-stock/30 transition text-xs"
                         >
                           Delete
                         </button>
@@ -232,24 +232,24 @@ export default function CategoriesClient({
 
       {/* Modal Dialog */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
-            <h2 className="text-lg font-bold text-white mb-1">
+        <div className="fixed inset-0 z-50 bg-text-primary/20 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="card-pearl bg-surface-card border border-divider rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative">
+            <h2 className="text-lg font-serif font-medium text-text-primary mb-1">
               {editingCategory ? "Edit Category" : "Add New Category"}
             </h2>
-            <p className="text-xs text-slate-400 mb-4">
+            <p className="text-xs text-text-secondary mb-4">
               Categories group anklets for wholesale browsing on the varieties page.
             </p>
 
             {error && (
-              <div className="mb-4 bg-rose-500/10 border border-rose-500/20 rounded-xl p-3 text-xs text-rose-300">
+              <div className="mb-4 bg-status-out-of-stock-bg border border-status-out-of-stock/25 rounded-xl p-3 text-xs text-status-out-of-stock-text">
                 {error}
               </div>
             )}
 
             <form onSubmit={handleSave} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
+                <label className="block text-xs font-medium text-text-secondary mb-1.5">
                   Category Name *
                 </label>
                 <input
@@ -257,13 +257,13 @@ export default function CategoriesClient({
                   required
                   value={name}
                   onChange={(e) => handleNameChange(e.target.value)}
-                  placeholder="e.g. Traditional Agra Ghungroo Payal"
-                  className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                  placeholder="e.g. Traditional Mathura Ghungroo Payal"
+                  className="input-pearl text-xs"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
+                <label className="block text-xs font-medium text-text-secondary mb-1.5">
                   URL Slug * (auto-generated)
                 </label>
                 <input
@@ -271,13 +271,13 @@ export default function CategoriesClient({
                   required
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
-                  placeholder="e.g. traditional-agra-ghungroo-payal"
-                  className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs text-amber-300 font-mono focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                  placeholder="e.g. traditional-mathura-ghungroo-payal"
+                  className="input-pearl text-xs font-mono text-accent"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
+                <label className="block text-xs font-medium text-text-secondary mb-1.5">
                   Description
                 </label>
                 <textarea
@@ -285,22 +285,22 @@ export default function CategoriesClient({
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Brief description of this anklet line..."
-                  className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                  className="input-pearl text-xs"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-divider">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition"
+                  className="btn btn-outline text-xs py-2 px-4"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-950 bg-amber-400 hover:bg-amber-300 transition shadow-md shadow-amber-500/20 disabled:opacity-50"
+                  className="btn btn-primary text-xs py-2 px-5 disabled:opacity-50"
                 >
                   {loading ? "Saving..." : editingCategory ? "Save Changes" : "Create Category"}
                 </button>

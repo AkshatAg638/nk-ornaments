@@ -43,17 +43,17 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
   return (
     <>
       {/* Top Header Bar */}
-      <header className="sticky top-0 z-40 bg-slate-900/95 border-b border-slate-800 backdrop-blur-md">
+      <header className="sticky top-0 z-40 bg-surface-card/95 border-b border-divider backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* Mobile menu button */}
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+              className="lg:hidden p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-bg-alt transition"
               aria-label="Toggle Navigation Menu"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {mobileMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
@@ -64,12 +64,12 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
 
             {/* Brand Logo */}
             <Link href="/admin" className="flex items-center gap-2.5">
-              <span className="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center text-slate-950 font-bold text-sm shadow-md shadow-amber-500/20">
+              <span className="w-8 h-8 rounded-lg bg-accent text-bg-primary font-bold text-sm shadow-sm flex items-center justify-center">
                 NK
               </span>
               <div className="flex flex-col">
-                <span className="font-semibold text-sm text-white tracking-tight">N.K Ornaments</span>
-                <span className="text-[10px] text-amber-400 font-medium tracking-wider uppercase">Admin Portal</span>
+                <span className="font-serif font-medium text-base text-text-primary tracking-tight">N.K. Ornaments</span>
+                <span className="text-[10px] text-text-secondary font-mono tracking-wider uppercase">Admin Portal</span>
               </div>
             </Link>
           </div>
@@ -79,7 +79,7 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
             <Link
               href="/"
               target="_blank"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition border border-slate-700/60"
+              className="btn btn-outline text-xs py-1.5 px-3 hidden sm:inline-flex items-center gap-1.5"
             >
               <span>View Live Website</span>
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,7 +89,7 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
 
             <Link
               href="/admin/change-password"
-              className="text-xs text-slate-400 hover:text-amber-400 transition hidden md:block"
+              className="text-xs text-text-secondary hover:text-text-primary transition hidden md:block"
             >
               Change Password
             </Link>
@@ -97,7 +97,7 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
             <button
               onClick={handleLogout}
               disabled={loggingOut}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-rose-300 hover:text-white hover:bg-rose-500/20 border border-rose-500/30 transition"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium text-status-out-of-stock-text bg-status-out-of-stock-bg border border-status-out-of-stock/30 hover:bg-status-out-of-stock/20 transition"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
@@ -109,19 +109,19 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
       </header>
 
       {/* Main Admin Navigation Bar (Desktop Horizontal) */}
-      <nav className="hidden lg:block bg-slate-900 border-b border-slate-800">
+      <nav className="hidden lg:block bg-bg-alt border-b border-divider">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-1 py-2 overflow-x-auto">
+          <div className="flex space-x-1 py-1.5 overflow-x-auto">
             {navItems.map((item) => {
               const active = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-medium transition ${
+                  className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs transition duration-200 ${
                     active
-                      ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
-                      : "text-slate-400 hover:text-white hover:bg-slate-800/80"
+                      ? "bg-surface-card text-text-primary border border-divider shadow-sm font-semibold"
+                      : "text-text-secondary hover:text-text-primary hover:bg-surface-card/60"
                   }`}
                 >
                   <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -137,20 +137,20 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm">
-          <div className="fixed inset-y-0 left-0 w-64 bg-slate-900 border-r border-slate-800 p-5 flex flex-col justify-between shadow-2xl">
+        <div className="lg:hidden fixed inset-0 z-50 bg-text-primary/20 backdrop-blur-sm">
+          <div className="fixed inset-y-0 left-0 w-64 bg-surface-card border-r border-divider p-5 flex flex-col justify-between shadow-2xl">
             <div>
-              <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+              <div className="flex items-center justify-between pb-4 border-b border-divider">
                 <div className="flex items-center gap-2">
-                  <span className="w-7 h-7 rounded-lg bg-amber-500 flex items-center justify-center text-slate-950 font-bold text-xs">
+                  <span className="w-7 h-7 rounded-lg bg-accent text-bg-primary flex items-center justify-center font-bold text-xs">
                     NK
                   </span>
-                  <span className="font-semibold text-sm text-white">N.K Ornaments</span>
+                  <span className="font-serif font-medium text-sm text-text-primary">N.K. Ornaments</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-1 rounded-md text-slate-400 hover:text-white"
+                  className="p-1 rounded-md text-text-secondary hover:text-text-primary"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -158,8 +158,8 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
                 </button>
               </div>
 
-              <div className="mt-4 text-xs text-slate-400 px-2 py-1 truncate">
-                Admin: <span className="text-amber-400">{userEmail}</span>
+              <div className="mt-4 text-xs text-text-secondary px-2 py-1 truncate font-mono">
+                Admin: <span className="text-text-primary font-medium">{userEmail}</span>
               </div>
 
               <div className="mt-3 space-y-1">
@@ -170,10 +170,10 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
                       key={item.name}
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
+                      className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition ${
                         active
-                          ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
-                          : "text-slate-300 hover:text-white hover:bg-slate-800"
+                          ? "bg-bg-alt text-text-primary border border-divider font-semibold"
+                          : "text-text-secondary hover:text-text-primary hover:bg-bg-alt/60"
                       }`}
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,18 +186,18 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-800 space-y-2">
+            <div className="pt-4 border-t border-divider space-y-2">
               <Link
                 href="/admin/change-password"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 text-xs text-slate-300 hover:text-amber-400 rounded-lg transition"
+                className="block px-3 py-2 text-xs text-text-secondary hover:text-text-primary rounded-xl transition"
               >
                 Change Admin Password
               </Link>
               <button
                 onClick={handleLogout}
                 disabled={loggingOut}
-                className="w-full text-left px-3 py-2 text-xs text-rose-400 hover:bg-rose-500/10 rounded-lg transition"
+                className="w-full text-left px-3 py-2 text-xs text-status-out-of-stock-text hover:bg-status-out-of-stock-bg rounded-xl transition"
               >
                 Sign Out
               </button>

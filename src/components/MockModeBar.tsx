@@ -49,9 +49,9 @@ export default function MockModeBar({ initialRole, isMock }: MockModeBarProps) {
     return (
       <button
         onClick={() => setCollapsed(false)}
-        className="fixed bottom-3 right-3 z-50 px-3 py-1.5 rounded-full bg-amber-500 text-slate-950 font-bold text-xs shadow-2xl hover:scale-105 transition flex items-center gap-1.5 border border-amber-300"
+        className="fixed bottom-3 right-3 z-50 px-3 py-1.5 rounded-full bg-surface-elevated text-text-primary font-medium text-xs shadow-lg hover:border-accent transition flex items-center gap-2 border border-divider"
       >
-        <span className="w-2 h-2 rounded-full bg-slate-950 animate-ping"></span>
+        <span className="w-2 h-2 rounded-full bg-accent animate-ping" />
         <span>Mock Mode: {role.toUpperCase()}</span>
       </button>
     );
@@ -60,31 +60,31 @@ export default function MockModeBar({ initialRole, isMock }: MockModeBarProps) {
   return (
     <aside
       aria-label="Mock mode controls"
-      className="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 w-[96%] max-w-4xl bg-slate-900/95 border border-amber-500/40 rounded-2xl shadow-2xl backdrop-blur-xl px-4 py-2.5 text-xs text-white"
+      className="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 w-[96%] max-w-4xl bg-surface-elevated/95 border border-divider rounded-2xl shadow-xl backdrop-blur-xl px-4 py-2.5 text-xs text-text-primary"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         {/* Left: Mode indicator */}
         <div className="flex items-center gap-2">
-          <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold tracking-wider text-[10px] uppercase">
-            Mock Mode Active
+          <span className="badge badge-category">
+            Mock Mode
           </span>
-          <span className="text-slate-400 hidden sm:inline text-[11px]">
+          <span className="text-text-secondary hidden sm:inline text-caption">
             In-memory sample data • Zero backend blockers
           </span>
         </div>
 
         {/* Center: Role Switcher */}
-        <div className="flex items-center gap-1.5 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
-          <span className="text-[10px] text-slate-400 px-2 font-medium">Viewing as:</span>
+        <div className="flex items-center gap-1 bg-bg-alt p-1 rounded-full border border-divider">
+          <span className="text-[10px] text-text-secondary px-2 font-medium">Viewing as:</span>
           {(["admin", "customer", "visitor"] as UserRole[]).map((r) => (
             <button
               key={r}
               onClick={() => handleRoleChange(r)}
               disabled={loading}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition capitalize ${
+              className={`px-3 py-1 rounded-full text-caption font-medium transition capitalize ${
                 role === r
-                  ? "bg-amber-500 text-slate-950 font-semibold shadow-sm"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-accent text-bg-primary font-semibold shadow-xs"
+                  : "text-text-secondary hover:text-text-primary"
               }`}
             >
               {r === "customer" ? "Wholesaler" : r}
@@ -97,14 +97,14 @@ export default function MockModeBar({ initialRole, isMock }: MockModeBarProps) {
           {pathname.startsWith("/admin") ? (
             <Link
               href="/"
-              className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition text-[11px]"
+              className="btn btn-outline btn-sm text-caption"
             >
               &larr; Storefront
             </Link>
           ) : (
             <Link
               href="/admin"
-              className="px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition text-[11px]"
+              className="btn btn-primary btn-sm text-caption"
             >
               Admin Panel &rarr;
             </Link>
@@ -114,15 +114,16 @@ export default function MockModeBar({ initialRole, isMock }: MockModeBarProps) {
             onClick={handleReset}
             disabled={loading}
             title="Reset sample data to factory defaults"
-            className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-rose-500/20 hover:text-rose-300 text-slate-400 transition text-[11px]"
+            className="px-2.5 py-1 rounded-full bg-bg-alt hover:bg-status-out-of-stock-bg hover:text-status-out-of-stock-text text-text-secondary transition text-caption border border-divider"
           >
             Reset
           </button>
 
           <button
             onClick={() => setCollapsed(true)}
-            className="p-1 rounded-lg text-slate-400 hover:text-white"
+            className="p-1 rounded-full text-text-secondary hover:text-text-primary transition"
             title="Minimize bar"
+            aria-label="Minimize bar"
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />

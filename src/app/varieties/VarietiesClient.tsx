@@ -96,31 +96,34 @@ export default function VarietiesClient({
     });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {/* Title & Introduction */}
-      <div className="text-center max-w-2xl mx-auto space-y-2">
-        <span className="text-[11px] font-semibold tracking-widest text-amber-400 uppercase">
-          Wholesale Silver Anklet Collection
+      <div className="text-center max-w-2xl mx-auto space-y-3">
+        <span className="badge badge-category">
+          Wholesale German Silver Collection
         </span>
-        <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h1
+          className="text-3xl sm:text-5xl font-normal text-text-primary tracking-tight"
+          style={{ fontFamily: "var(--font-heading)" }}
+        >
           Explore Our Payal Varieties
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-          From heavy bridal filigree payal to daily-wear lightweight sterling chains, browse directly from Agra's master manufacturers.
+        <p className="text-sm text-text-secondary leading-relaxed prose-body">
+          From heavy bridal filigree payal to daily-wear lightweight German Silver chains, browse directly from Mathura&apos;s master manufacturers with factory trade rates.
         </p>
       </div>
 
-      {/* Category Tabs (Horizontal Scrollable) */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-slate-800">
+      {/* Category Tabs (Horizontal Scrollable Pills) */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-divider">
         <button
           onClick={() => setActiveCategory("all")}
-          className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
+          className={`whitespace-nowrap transition ${
             activeCategory === "all"
-              ? "bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20"
-              : "text-slate-400 hover:text-white bg-slate-900 border border-slate-800"
+              ? "btn btn-primary btn-sm"
+              : "btn btn-outline btn-sm"
           }`}
         >
-          All Varieties ({anklets.filter((a) => a.is_active).length})
+          All Collections ({anklets.filter((a) => a.is_active).length})
         </button>
 
         {categories.map((c) => {
@@ -131,10 +134,10 @@ export default function VarietiesClient({
             <button
               key={c.id}
               onClick={() => setActiveCategory(c.slug)}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
+              className={`whitespace-nowrap transition ${
                 activeCategory === c.slug
-                  ? "bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20"
-                  : "text-slate-400 hover:text-white bg-slate-900 border border-slate-800"
+                  ? "btn btn-primary btn-sm"
+                  : "btn btn-outline btn-sm"
               }`}
             >
               {c.name} ({count})
@@ -144,7 +147,7 @@ export default function VarietiesClient({
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900/80 border border-slate-800 p-3 rounded-2xl">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-bg-alt border border-divider p-3.5 rounded-2xl">
         {/* Search */}
         <div className="w-full sm:max-w-xs relative">
           <input
@@ -152,26 +155,26 @@ export default function VarietiesClient({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search designs or SKU..."
-            className="w-full px-3.5 py-2 pl-9 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+            className="input-pearl pl-9 text-xs py-2"
           />
           <svg
-            className="w-4 h-4 text-slate-500 absolute left-3 top-2.5"
+            className="w-4 h-4 text-text-secondary absolute left-3 top-2.5 pointer-events-none"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
           </svg>
         </div>
 
         {/* Options */}
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-          <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-300">
+        <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+          <label className="flex items-center gap-2 cursor-pointer text-xs text-text-secondary select-none font-medium">
             <input
               type="checkbox"
               checked={stockOnly}
               onChange={(e) => setStockOnly(e.target.checked)}
-              className="rounded text-amber-500 focus:ring-amber-500 h-4 w-4 bg-slate-950 border-slate-700"
+              className="rounded accent-accent h-4 w-4 border-divider"
             />
             <span>In-Stock Only</span>
           </label>
@@ -179,7 +182,7 @@ export default function VarietiesClient({
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="px-3 py-2 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+            className="input-pearl w-auto text-xs py-2 px-3 font-medium"
           >
             <option value="newest">Sort: Newest First</option>
             <option value="price_low">Price: Low to High</option>
@@ -191,14 +194,16 @@ export default function VarietiesClient({
 
       {/* Product Grid */}
       {filtered.length === 0 ? (
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center max-w-lg mx-auto space-y-3">
-          <div className="w-12 h-12 mx-auto rounded-full bg-slate-800 flex items-center justify-center text-slate-500">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        <div className="card-pearl bg-bg-alt p-12 text-center max-w-lg mx-auto space-y-3">
+          <div className="w-12 h-12 mx-auto rounded-full bg-bg-primary border border-divider flex items-center justify-center text-text-secondary">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
             </svg>
           </div>
-          <h2 className="text-base font-bold text-white">No Anklets Found</h2>
-          <p className="text-xs text-slate-400">
+          <h2 className="text-base font-semibold text-text-primary">
+            No Designs Found
+          </h2>
+          <p className="text-xs text-text-secondary">
             Our collection is being updated. Please adjust your search or check back soon.
           </p>
         </div>
@@ -217,26 +222,26 @@ export default function VarietiesClient({
               <div
                 key={item.id}
                 onClick={() => setSelectedAnklet(item)}
-                className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden hover:border-amber-500/50 hover:shadow-2xl hover:shadow-amber-500/5 transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+                className="card-pearl bg-bg-primary flex flex-col justify-between group cursor-pointer"
               >
                 <div>
                   {/* Photo Container */}
-                  <div className="relative aspect-square overflow-hidden bg-slate-950">
+                  <div className="relative aspect-square overflow-hidden bg-bg-alt border-b border-divider">
                     <img
                       src={primaryImg}
                       alt={item.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-103"
                     />
 
-                    {/* Stock Pill */}
+                    {/* Stock Badge */}
                     <div className="absolute top-3 left-3">
                       <span
-                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold backdrop-blur-md shadow-md ${
+                        className={`badge ${
                           isOut
-                            ? "bg-rose-500/90 text-white"
+                            ? "badge-out-of-stock"
                             : isLow
-                            ? "bg-amber-500/90 text-slate-950 font-bold"
-                            : "bg-emerald-600/90 text-white"
+                            ? "badge-low-stock"
+                            : "badge-in-stock"
                         }`}
                       >
                         {isOut
@@ -250,7 +255,7 @@ export default function VarietiesClient({
                     {/* Weight tag */}
                     {item.weight && (
                       <div className="absolute bottom-3 right-3">
-                        <span className="px-2 py-0.5 rounded-md bg-slate-950/90 text-emerald-300 font-mono text-[11px] font-semibold backdrop-blur-sm border border-emerald-500/30 shadow">
+                        <span className="px-2 py-0.5 rounded-full bg-bg-primary/90 text-text-primary font-mono text-[11px] font-medium border border-divider shadow-xs backdrop-blur-xs">
                           ⚖️ {item.weight}
                         </span>
                       </div>
@@ -259,37 +264,42 @@ export default function VarietiesClient({
 
                   {/* Body */}
                   <div className="p-5 space-y-2">
-                    <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                    <div className="flex items-center justify-between text-[11px] text-text-secondary font-mono">
                       <span>{item.category?.name}</span>
-                      <span className="text-amber-400">{item.sku}</span>
+                      <span className="text-accent">{item.sku}</span>
                     </div>
 
-                    <h2 className="text-sm font-bold text-white group-hover:text-amber-300 transition line-clamp-1">
+                    <h2
+                      className="text-lg font-medium text-text-primary group-hover:text-accent transition line-clamp-1"
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
                       {item.name}
                     </h2>
 
-                    <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
-                      {item.description || "Premium German Silver wholesale payal with authentic Agra craftsmanship."}
+                    <p className="text-caption text-text-secondary line-clamp-2 leading-relaxed">
+                      {item.description || "Premium German Silver wholesale payal with authentic Mathura craftsmanship."}
                     </p>
                   </div>
                 </div>
 
                 {/* Footer Strip */}
-                <div className="p-5 pt-0 border-t border-slate-800/80 mt-2 flex items-center justify-between">
+                <div className="p-5 pt-0 border-t border-divider mt-2 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-slate-500 block">Wholesale Rate</span>
+                    <span className="text-[10px] text-text-secondary uppercase tracking-wider block">
+                      Wholesale Rate
+                    </span>
                     {canViewPrice ? (
-                      <span className="text-base font-bold text-amber-400">
+                      <span className="text-sm font-semibold text-text-primary">
                         {formatINR(item.wholesale_price)}
                       </span>
                     ) : (
-                      <span className="text-xs font-semibold text-amber-400/90 flex items-center gap-1">
-                        <span>🔒 Login to View</span>
+                      <span className="text-xs font-medium text-accent">
+                        🔒 Login to View
                       </span>
                     )}
                   </div>
 
-                  <span className="text-xs font-semibold text-amber-400 group-hover:translate-x-1 transition flex items-center gap-1">
+                  <span className="text-xs font-medium text-accent group-hover:translate-x-1 transition flex items-center gap-1">
                     <span>Details</span>
                     <span>&rarr;</span>
                   </span>

@@ -70,7 +70,7 @@ export default function RegisterForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs">
+        <div className="p-3 rounded-xl bg-status-out-of-stock-bg border border-status-out-of-stock/25 text-status-out-of-stock-text text-xs">
           {error}
         </div>
       )}
@@ -78,7 +78,7 @@ export default function RegisterForm() {
       {/* Business & Contact Person */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
+          <label className="block text-xs font-medium text-text-secondary mb-1.5">
             Jewelry Firm / Showroom Name *
           </label>
           <input
@@ -87,12 +87,12 @@ export default function RegisterForm() {
             value={businessName}
             onChange={(e) => setBusinessName(e.target.value)}
             placeholder="e.g. Royal Jewellers"
-            className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-amber-500 transition"
+            className="input-pearl text-xs"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
+          <label className="block text-xs font-medium text-text-secondary mb-1.5">
             Proprietor / Contact Person *
           </label>
           <input
@@ -101,7 +101,7 @@ export default function RegisterForm() {
             value={contactPerson}
             onChange={(e) => setContactPerson(e.target.value)}
             placeholder="e.g. Rajesh Kumar"
-            className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-amber-500 transition"
+            className="input-pearl text-xs"
           />
         </div>
       </div>
@@ -109,7 +109,7 @@ export default function RegisterForm() {
       {/* Email & Phone */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
+          <label className="block text-xs font-medium text-text-secondary mb-1.5">
             Email Address *
           </label>
           <input
@@ -118,12 +118,12 @@ export default function RegisterForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="orders@royaljewellers.com"
-            className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-amber-500 transition"
+            className="input-pearl text-xs"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
+          <label className="block text-xs font-medium text-text-secondary mb-1.5">
             Mobile / WhatsApp *
           </label>
           <input
@@ -132,18 +132,18 @@ export default function RegisterForm() {
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="+91 98765 43210"
-            className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-amber-500 transition"
+            className="input-pearl text-xs"
           />
         </div>
       </div>
 
       {/* GST Number */}
       <div>
-        <div className="flex items-center justify-between mb-1">
-          <label className="block text-xs font-semibold text-slate-300">
+        <div className="flex items-center justify-between mb-1.5">
+          <label className="block text-xs font-medium text-text-secondary">
             GSTIN (GST Number)
           </label>
-          <span className="text-[11px] text-slate-500">
+          <span className="text-[11px] text-text-secondary">
             Optional &bull; Required for tax invoice
           </span>
         </div>
@@ -152,13 +152,13 @@ export default function RegisterForm() {
           value={gstNumber}
           onChange={(e) => setGstNumber(e.target.value)}
           placeholder="09AAAAA0000A1Z5"
-          className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm uppercase font-mono focus:outline-none focus:border-amber-500 transition"
+          className="input-pearl text-xs uppercase font-mono"
         />
       </div>
 
       {/* Address */}
       <div>
-        <label className="block text-xs font-semibold text-slate-300 mb-1">
+        <label className="block text-xs font-medium text-text-secondary mb-1.5">
           Shop / Dispatch Address *
         </label>
         <input
@@ -167,14 +167,14 @@ export default function RegisterForm() {
           value={addressLine}
           onChange={(e) => setAddressLine(e.target.value)}
           placeholder="Shop No. 12, Sarafa Bazar"
-          className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-amber-500 transition"
+          className="input-pearl text-xs"
         />
       </div>
 
-      {/* City, State, Pincode */}
-      <div className="grid grid-cols-3 gap-2.5">
+      {/* City, State, Pincode (mobile-first responsive grid) */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
+          <label className="block text-xs font-medium text-text-secondary mb-1.5">
             City *
           </label>
           <input
@@ -183,12 +183,12 @@ export default function RegisterForm() {
             value={city}
             onChange={(e) => setCity(e.target.value)}
             placeholder="Jaipur"
-            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs focus:outline-none focus:border-amber-500 transition"
+            className="input-pearl text-xs"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
+          <label className="block text-xs font-medium text-text-secondary mb-1.5">
             State *
           </label>
           <input
@@ -197,12 +197,12 @@ export default function RegisterForm() {
             value={state}
             onChange={(e) => setState(e.target.value)}
             placeholder="Rajasthan"
-            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs focus:outline-none focus:border-amber-500 transition"
+            className="input-pearl text-xs"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
+          <label className="block text-xs font-medium text-text-secondary mb-1.5">
             Pincode *
           </label>
           <input
@@ -211,7 +211,7 @@ export default function RegisterForm() {
             value={pincode}
             onChange={(e) => setPincode(e.target.value)}
             placeholder="302001"
-            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs font-mono focus:outline-none focus:border-amber-500 transition"
+            className="input-pearl text-xs font-mono"
           />
         </div>
       </div>
@@ -219,7 +219,7 @@ export default function RegisterForm() {
       {/* Password & Confirm Password */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
+          <label className="block text-xs font-medium text-text-secondary mb-1.5">
             Create Password *
           </label>
           <input
@@ -229,12 +229,12 @@ export default function RegisterForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="At least 6 characters"
-            className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-amber-500 transition"
+            className="input-pearl text-xs"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
+          <label className="block text-xs font-medium text-text-secondary mb-1.5">
             Confirm Password *
           </label>
           <input
@@ -244,7 +244,7 @@ export default function RegisterForm() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="Re-enter password"
-            className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-amber-500 transition"
+            className="input-pearl text-xs"
           />
         </div>
       </div>
@@ -253,15 +253,15 @@ export default function RegisterForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 transition shadow-lg shadow-amber-500/20 active:scale-[0.98] disabled:opacity-50"
+          className="btn btn-primary w-full py-3.5 text-xs font-semibold tracking-wide disabled:opacity-50"
         >
           {loading ? "Registering Showroom..." : "Register & View Wholesale Rates"}
         </button>
       </div>
 
-      <p className="text-center text-xs text-slate-400 pt-1">
+      <p className="text-center text-xs text-text-secondary pt-1">
         Already registered?{" "}
-        <Link href="/login" className="text-amber-400 hover:underline font-semibold">
+        <Link href="/login" className="text-accent hover:underline font-semibold">
           Sign In here &rarr;
         </Link>
       </p>

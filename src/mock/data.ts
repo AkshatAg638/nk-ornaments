@@ -587,7 +587,7 @@ export const initialMockSettings: Record<string, string> = {
   business_name: "N.K. Ornaments",
   tagline: "Master Manufacturers & Wholesalers of Fine German Silver Payal Since 1995",
   banner_text:
-    "✨ B2B Wholesale Only • Direct Factory Rates • Premium German Silver • Mathura",
+    "Direct Factory Rates • Premium German Silver • Mathura",
   about_text:
     "Established in 1995 at Chowk Bazar, Mathura, N.K. Ornaments (Proprietor: Sachin Chaudhary) is a premier manufacturer and trade supplier of German Silver payal and traditional ornaments. We cater exclusively to retail jewelry showrooms, bullions, and regional distributors across India with direct manufacturer pricing and transparent weight breakdowns.",
   contact_phone: "+91 98377 55055",
