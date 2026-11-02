@@ -23,6 +23,11 @@ export const metadata: Metadata = {
   title: "N.K. Ornaments | Wholesale German Silver Payal & Anklet Manufacturer",
   description:
     "Direct Mathura factory rates on premium German Silver payal, bridal anklets, antique oxidised designs, and wholesale ornaments with exact weight specifications for retail jewelers across India.",
+  icons: {
+    icon: "/brand-logo.png",
+    shortcut: "/brand-logo.png",
+    apple: "/brand-logo.png",
+  },
 };
 
 export default async function RootLayout({

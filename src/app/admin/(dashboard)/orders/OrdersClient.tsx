@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { OrderWithDetails, OrderStatus, formatINR } from "@/lib/types";
+import OrderPrintModal from "@/components/common/OrderPrintModal";
+import { exportOrdersToCSV } from "@/lib/exportCsv";
+import { calculateItemPrice, PAIRS_PER_DOZEN } from "@/lib/pricing";
 
 interface OrdersClientProps {
   initialOrders: OrderWithDetails[];
@@ -14,6 +17,7 @@ export default function OrdersClient({ initialOrders }: OrdersClientProps) {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<OrderWithDetails | null>(null);
+  const [printingOrder, setPrintingOrder] = useState<OrderWithDetails | null>(null);
   const [statusUpdate, setStatusUpdate] = useState<OrderStatus>("pending");
   const [noteUpdate, setNoteUpdate] = useState("");
   const [saving, setSaving] = useState(false);
@@ -52,15 +56,21 @@ export default function OrdersClient({ initialOrders }: OrdersClientProps) {
     const phone = (order.customer?.whatsapp || order.customer?.phone || "")
       .replace(/[^0-9]/g, "");
     const totalAmount = order.items.reduce(
-      (sum, it) => sum + it.price_snapshot * it.quantity,
+      (sum, it) =>
+        sum +
+        calculateItemPrice(
+          it.quantity,
+          it.price_snapshot,
+          it.anklet?.weight
+        ).estimatedPrice,
       0
     );
 
     const itemsSummary = order.items
-      .map(
-        (it, idx) =>
-          `${idx + 1}. ${it.anklet_name_snapshot} (${it.quantity} pairs @ ₹${it.price_snapshot}) = ₹${it.price_snapshot * it.quantity}`
-      )
+      .map((it, idx) => {
+        const calc = calculateItemPrice(it.quantity, it.price_snapshot, it.anklet?.weight);
+        return `${idx + 1}. ${it.anklet_name_snapshot} (${it.quantity} dz / ${calc.totalPairs} pairs • ~${calc.totalGrams}g @ ₹${it.price_snapshot}/kg) = ₹${calc.estimatedPrice.toLocaleString("en-IN")}`;
+      })
       .join("\n");
 
     const message = `*N.K. Ornaments - Wholesale Order Confirmation*\n\n` +
@@ -69,7 +79,7 @@ export default function OrdersClient({ initialOrders }: OrdersClientProps) {
       `*Contact:* ${order.customer?.contact_person} (${order.customer?.phone})\n` +
       `*Status:* ${order.status.toUpperCase()}\n\n` +
       `*Order Items:*\n${itemsSummary}\n\n` +
-      `*Total Value:* ₹${totalAmount.toLocaleString("en-IN")}\n\n` +
+      `*Total Wholesale Value:* ₹${totalAmount.toLocaleString("en-IN")}\n\n` +
       `Thank you for doing business with N.K. Ornaments, Mathura. (Proprietor: Sachin Chaudhary: +91 98377 55055)`;
 
     return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
@@ -108,8 +118,21 @@ export default function OrdersClient({ initialOrders }: OrdersClientProps) {
             Wholesale Order Management
           </h1>
           <p className="text-xs sm:text-sm text-text-secondary mt-1">
-            Review incoming wholesaler bookings, manage dispatch logistics, and generate WhatsApp summaries.
+            Review incoming wholesaler bookings, manage dispatch logistics, print packing slips, and export accounting records.
           </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => exportOrdersToCSV(filtered, "NK_Ornaments_Wholesale_Orders")}
+            className="btn btn-outline text-xs py-2 px-3.5 flex items-center gap-1.5 shadow-sm"
+            title="Export currently filtered orders to CSV for Excel, Sheets, or Tally"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>Export to CSV ({filtered.length})</span>
+          </button>
         </div>
       </div>
 
@@ -156,7 +179,7 @@ export default function OrdersClient({ initialOrders }: OrdersClientProps) {
                 <th className="py-3.5 px-4 sm:px-6">Order #</th>
                 <th className="py-3.5 px-4">Wholesaler</th>
                 <th className="py-3.5 px-4">City / State</th>
-                <th className="py-3.5 px-4">Designs &amp; Pairs</th>
+                <th className="py-3.5 px-4">Designs &amp; Quantity</th>
                 <th className="py-3.5 px-4">Total Value</th>
                 <th className="py-3.5 px-4 text-center">Status</th>
                 <th className="py-3.5 px-4 sm:px-6 text-right">Actions</th>
@@ -171,14 +194,15 @@ export default function OrdersClient({ initialOrders }: OrdersClientProps) {
                 </tr>
               ) : (
                 filtered.map((ord) => {
-                  const totalPairs = ord.items.reduce(
+                  const totalDozens = ord.items.reduce(
                     (sum, it) => sum + it.quantity,
                     0
                   );
-                  const totalValue = ord.items.reduce(
-                    (sum, it) => sum + it.price_snapshot * it.quantity,
-                    0
-                  );
+                  const totalPairs = totalDozens * PAIRS_PER_DOZEN;
+                  const totalValue = ord.items.reduce((sum, it) => {
+                    const calc = calculateItemPrice(it.quantity, it.price_snapshot, it.anklet?.weight);
+                    return sum + calc.estimatedPrice;
+                  }, 0);
 
                   return (
                     <tr key={ord.id} className="hover:bg-bg-alt/40 transition">
@@ -204,7 +228,7 @@ export default function OrdersClient({ initialOrders }: OrdersClientProps) {
 
                       <td className="py-3.5 px-4 text-text-secondary">
                         <span className="font-medium text-text-primary">{ord.items.length}</span> models &bull;{" "}
-                        <span className="font-medium text-text-primary">{totalPairs}</span> pairs
+                        <span className="font-medium text-text-primary">{totalDozens}</span> dz ({totalPairs} pairs)
                       </td>
 
                       <td className="py-3.5 px-4 font-serif text-sm font-medium text-text-primary">
@@ -231,8 +255,15 @@ export default function OrdersClient({ initialOrders }: OrdersClientProps) {
 
                       <td className="py-3.5 px-4 sm:px-6 text-right space-x-2">
                         <button
+                          onClick={() => setPrintingOrder(ord)}
+                          className="btn btn-outline text-[11px] py-1 px-2.5 inline-flex items-center gap-1"
+                          title="Print Packing Slip / Wholesale Estimate"
+                        >
+                          <span>🖨️ Slip</span>
+                        </button>
+                        <button
                           onClick={() => openOrderModal(ord)}
-                          className="btn btn-outline text-[11px] py-1 px-2.5 inline-block"
+                          className="btn btn-primary text-[11px] py-1 px-2.5 inline-block"
                         >
                           View &amp; Fulfill
                         </button>
@@ -305,42 +336,55 @@ export default function OrdersClient({ initialOrders }: OrdersClientProps) {
                 Booked Anklet Models
               </h3>
               <div className="border border-divider rounded-xl overflow-hidden divide-y divide-divider/60">
-                {selectedOrder.items.map((it) => (
-                  <div
-                    key={it.id}
-                    className="p-3 bg-surface-card flex items-center justify-between gap-3 text-xs"
-                  >
-                    <div className="flex items-center gap-3">
-                      {it.primary_image && (
-                        <img
-                          src={it.primary_image}
-                          alt={it.anklet_name_snapshot}
-                          className="w-10 h-10 rounded-lg object-cover border border-divider bg-bg-alt"
-                        />
-                      )}
-                      <div>
-                        <span className="font-medium text-text-primary block">
-                          {it.anklet_name_snapshot}
-                        </span>
-                        <span className="text-[11px] text-text-secondary">
-                          {it.quantity} pairs &times; {formatINR(it.price_snapshot)}
-                        </span>
+                {selectedOrder.items.map((it) => {
+                  const calc = calculateItemPrice(
+                    it.quantity,
+                    it.price_snapshot,
+                    it.anklet?.weight
+                  );
+                  return (
+                    <div
+                      key={it.id}
+                      className="p-3 bg-surface-card flex items-center justify-between gap-3 text-xs"
+                    >
+                      <div className="flex items-center gap-3">
+                        {it.primary_image && (
+                          <img
+                            src={it.primary_image}
+                            alt={it.anklet_name_snapshot}
+                            className="w-10 h-10 rounded-lg object-cover border border-divider bg-bg-alt"
+                          />
+                        )}
+                        <div>
+                          <span className="font-medium text-text-primary block">
+                            {it.anklet_name_snapshot}
+                          </span>
+                          <span className="text-[11px] text-text-secondary">
+                            {it.quantity} dz ({calc.totalPairs} pairs &bull; ~{calc.totalGrams}g) &times; {formatINR(it.price_snapshot)}/kg
+                          </span>
+                        </div>
                       </div>
+                      <span className="font-serif text-sm font-medium text-text-primary">
+                        {formatINR(calc.estimatedPrice)}
+                      </span>
                     </div>
-                    <span className="font-serif text-sm font-medium text-text-primary">
-                      {formatINR(it.price_snapshot * it.quantity)}
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Order Total */}
               <div className="mt-3 flex items-center justify-between p-3.5 bg-bg-alt border border-divider rounded-xl text-xs">
-                <span className="font-medium text-text-secondary">Total Order Value:</span>
+                <span className="font-medium text-text-secondary">Total Wholesale Value:</span>
                 <span className="text-base font-serif font-medium text-text-primary">
                   {formatINR(
                     selectedOrder.items.reduce(
-                      (sum, it) => sum + it.price_snapshot * it.quantity,
+                      (sum, it) =>
+                        sum +
+                        calculateItemPrice(
+                          it.quantity,
+                          it.price_snapshot,
+                          it.anklet?.weight
+                        ).estimatedPrice,
                       0
                     )
                   )}
@@ -389,6 +433,14 @@ export default function OrdersClient({ initialOrders }: OrdersClientProps) {
 
               <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-divider">
                 <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setPrintingOrder(selectedOrder)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-bg-alt text-text-primary border border-divider hover:border-accent transition"
+                  >
+                    <span>🖨️ Print Order Slip / PDF</span>
+                  </button>
+
                   <a
                     href={getWhatsAppShareUrl(selectedOrder)}
                     target="_blank"
@@ -420,6 +472,14 @@ export default function OrdersClient({ initialOrders }: OrdersClientProps) {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Printable Slip Modal */}
+      {printingOrder && (
+        <OrderPrintModal
+          order={printingOrder}
+          onClose={() => setPrintingOrder(null)}
+        />
       )}
     </div>
   );

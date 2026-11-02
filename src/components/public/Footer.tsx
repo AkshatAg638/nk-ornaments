@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getCategories } from "@/lib/data";
 
 interface FooterProps {
@@ -22,8 +23,14 @@ export default async function Footer({ settings }: FooterProps) {
         {/* Brand Column */}
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-accent text-bg-primary flex items-center justify-center font-bold text-sm">
-              NK
+            <div className="relative w-10 h-10 rounded-full overflow-hidden border border-accent/40 shadow-xs shrink-0 bg-bg-alt">
+              <Image
+                src="/brand-logo.png"
+                alt="N.K. Ornaments"
+                fill
+                sizes="40px"
+                className="object-cover"
+              />
             </div>
             <div>
               <span

@@ -319,3 +319,89 @@ a, button, input, textarea, select {
   font-weight: 600;
 }
 
+/* ─────────────────────────────────────────────
+   PRINT STYLES FOR WHOLESALE ORDER SLIP & PACKING SLIP
+   ───────────────────────────────────────────── */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 8mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 10pt !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  body::after {
+    display: none !important;
+  }
+
+  /* CRITICAL: When the print modal is open, completely hide all page and dashboard elements */
+  body.print-modal-open > *:not(#nk-print-portal) {
+    display: none !important;
+  }
+
+  /* Universal hide for non-printable UI chrome */
+  .no-print,
+  header,
+  footer,
+  nav,
+  aside,
+  button,
+  input,
+  select,
+  textarea,
+  .print-toolbar {
+    display: none !important;
+  }
+
+  /* Reset portal and modal overlays for clean printing */
+  #nk-print-portal,
+  .print-modal-backdrop {
+    position: static !important;
+    display: block !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    inset: auto !important;
+  }
+
+  .print-modal-card {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    background: transparent !important;
+  }
+
+  #printable-slip {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+}
+
+

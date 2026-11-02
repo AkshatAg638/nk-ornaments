@@ -1,6 +1,7 @@
 import { hasAnyAdmin } from "@/lib/auth";
 import LoginForm from "./LoginForm";
 import Link from "next/link";
+import Image from "next/image";
 import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
@@ -18,8 +19,15 @@ export default async function AdminLoginPage() {
       <div className="w-full max-w-md">
         {/* Brand / Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-accent text-bg-primary mb-4 shadow-sm font-bold text-xl">
-            NK
+          <div className="relative inline-block w-20 h-20 rounded-full overflow-hidden border-2 border-accent/40 mb-4 shadow-md bg-bg-alt">
+            <Image
+              src="/brand-logo.png"
+              alt="N.K. Ornaments"
+              fill
+              sizes="80px"
+              className="object-cover"
+              priority
+            />
           </div>
           <h1 className="text-3xl sm:text-4xl font-serif tracking-tight text-text-primary">
             N.K. Ornaments

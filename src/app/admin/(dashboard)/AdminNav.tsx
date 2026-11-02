@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -64,9 +65,15 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
 
             {/* Brand Logo */}
             <Link href="/admin" className="flex items-center gap-2.5">
-              <span className="w-8 h-8 rounded-lg bg-accent text-bg-primary font-bold text-sm shadow-sm flex items-center justify-center">
-                NK
-              </span>
+              <div className="relative w-9 h-9 rounded-full overflow-hidden border border-accent/40 shadow-xs shrink-0 bg-bg-alt">
+                <Image
+                  src="/brand-logo.png"
+                  alt="N.K. Ornaments"
+                  fill
+                  sizes="36px"
+                  className="object-cover"
+                />
+              </div>
               <div className="flex flex-col">
                 <span className="font-serif font-medium text-base text-text-primary tracking-tight">N.K. Ornaments</span>
                 <span className="text-[10px] text-text-secondary font-mono tracking-wider uppercase">Admin Portal</span>

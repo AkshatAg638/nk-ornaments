@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { AuthSession } from "@/lib/types";
+import OrderPrintModal, { PrintableOrderInput } from "@/components/common/OrderPrintModal";
+import { calculateItemPrice, PAIRS_PER_DOZEN } from "@/lib/pricing";
 
 interface CartDrawerProps {
   session: AuthSession;
@@ -20,7 +22,10 @@ export default function CartDrawer({
     updateQuantity,
     removeItem,
     clearCart,
-    totalItems,
+    totalDozens,
+    totalPairs,
+    totalWeightGrams,
+    totalWeightKg,
     totalAmount,
     isOpen,
     setIsOpen,
@@ -32,23 +37,20 @@ export default function CartDrawer({
   const [guestCity, setGuestCity] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showPrintSlip, setShowPrintSlip] = useState(false);
   const [submittedOrder, setSubmittedOrder] = useState<{
     orderNumber: string;
     whatsappUrl: string;
     rawText: string;
+    totalDozens: number;
     totalPairs: number;
     totalAmount: number;
     totalGrams: number;
+    printableData?: PrintableOrderInput;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const cleanWhatsApp = whatsappNumber.replace(/[^0-9]/g, "");
-
-  function parseWeightGrams(weightStr?: string | null): number {
-    if (!weightStr) return 0;
-    const match = weightStr.match(/(\d+(?:\.\d+)?)\s*g/i);
-    return match ? parseFloat(match[1]) : 0;
-  }
 
   async function handleCheckout() {
     setError(null);
@@ -86,13 +88,6 @@ export default function CartDrawer({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to submit order");
 
-      // Calculate total batch weight
-      let totalGrams = 0;
-      items.forEach((item) => {
-        const itemGram = parseWeightGrams(item.weight);
-        totalGrams += itemGram * item.quantity;
-      });
-
       // Build structured WhatsApp message for instant supplier ping
       const orderNum = data.order_number || `ORD-${Date.now().toString().slice(-4)}`;
       let waText = `*N.K. ORNAMENTS (MATHURA) — WHOLESALE ORDER ESTIMATE*\n`;
@@ -107,23 +102,20 @@ export default function CartDrawer({
         session.customerProfile?.phone || guestPhone || "N/A"
       }\n`;
       waText += `--------------------------------\n`;
-      waText += `*Order Breakdown:*\n`;
+      waText += `*Order Breakdown (Rates per Kg):*\n`;
 
       items.forEach((item, idx) => {
+        const calc = calculateItemPrice(item.quantity, item.wholesale_price, item.weight);
         const weightTag = item.weight ? ` [${item.weight}]` : "";
         waText += `${idx + 1}. *${item.name}* (${item.sku})${weightTag}\n`;
-        waText += `   ${item.quantity} pairs @ ₹${item.wholesale_price.toLocaleString(
+        waText += `   ${item.quantity} dz (${calc.totalPairs} pairs • ~${calc.totalGrams}g) @ ₹${item.wholesale_price.toLocaleString(
           "en-IN"
-        )} = ₹${(item.quantity * item.wholesale_price).toLocaleString("en-IN")}\n`;
+        )}/kg = ₹${calc.estimatedPrice.toLocaleString("en-IN")}\n`;
       });
 
       waText += `--------------------------------\n`;
-      waText += `*Total Quantity:* ${totalItems} pairs\n`;
-      if (totalGrams > 0) {
-        waText += `*Total Estimated Weight:* ~${totalGrams.toLocaleString("en-IN")}g (${(
-          totalGrams / 1000
-        ).toFixed(2)} kg)\n`;
-      }
+      waText += `*Total Quantity:* ${totalDozens} dozen (${totalPairs} pairs)\n`;
+      waText += `*Total Batch Weight:* ~${totalWeightGrams.toLocaleString("en-IN")}g (${totalWeightKg} kg)\n`;
       waText += `*Total Estimated Value:* ₹${totalAmount.toLocaleString("en-IN")}\n`;
       if (note) waText += `*Buyer Note:* ${note}\n`;
       waText += `\n_Please confirm stock availability and dispatch schedule from Mathura workshop._`;
@@ -132,13 +124,42 @@ export default function CartDrawer({
         waText
       )}`;
 
+      const printableData: PrintableOrderInput = {
+        order_number: orderNum,
+        created_at: new Date().toISOString(),
+        status: "pending",
+        note: note || null,
+        customer: {
+          business_name: guestName || session.customerProfile?.business_name || "Wholesale Buyer",
+          contact_person: session.customerProfile?.contact_person || guestName || "Valued Retailer",
+          phone: guestPhone || session.customerProfile?.phone || "",
+          city: guestCity || session.customerProfile?.city || "Mathura Region",
+          address_line: session.customerProfile?.address_line || guestCity || "Direct Workshop Handover",
+          state: session.customerProfile?.state || "Uttar Pradesh",
+          pincode: session.customerProfile?.pincode || "281001",
+          gst_number: session.customerProfile?.gst_number || null,
+        },
+        items: items.map((it) => ({
+          anklet_name_snapshot: it.name,
+          price_snapshot: it.wholesale_price,
+          quantity: it.quantity,
+          anklet: {
+            sku: it.sku,
+            weight: it.weight,
+            material: "German Silver",
+          },
+        })),
+      };
+
       setSubmittedOrder({
         orderNumber: orderNum,
         whatsappUrl,
         rawText: waText,
-        totalPairs: totalItems,
+        totalDozens,
+        totalPairs,
         totalAmount,
-        totalGrams,
+        totalGrams: totalWeightGrams,
+        printableData,
       });
       clearCart();
     } catch (err: unknown) {
@@ -179,7 +200,7 @@ export default function CartDrawer({
                 Wholesale Order Draft
               </h2>
               <span className="badge badge-category">
-                {totalItems} pairs
+                {totalDozens} dz ({totalPairs} pairs)
               </span>
             </div>
             <button
@@ -221,14 +242,16 @@ export default function CartDrawer({
                 {/* Summary Card */}
                 <div className="bg-bg-alt rounded-xl p-3.5 border border-divider text-left text-xs space-y-1.5 font-mono">
                   <div className="flex justify-between text-text-secondary">
-                    <span>Total Pairs:</span>
-                    <span className="text-text-primary font-semibold font-sans">{submittedOrder.totalPairs} pairs</span>
+                    <span>Total Quantity:</span>
+                    <span className="text-text-primary font-semibold font-sans">
+                      {submittedOrder.totalDozens} dozen ({submittedOrder.totalPairs} pairs)
+                    </span>
                   </div>
                   {submittedOrder.totalGrams > 0 && (
                     <div className="flex justify-between text-text-secondary">
                       <span>Est. Batch Weight:</span>
                       <span className="text-accent font-semibold font-sans">
-                        ~{submittedOrder.totalGrams}g ({(submittedOrder.totalGrams / 1000).toFixed(2)} kg)
+                        ~{submittedOrder.totalGrams.toLocaleString("en-IN")}g ({(submittedOrder.totalGrams / 1000).toFixed(2)} kg)
                       </span>
                     </div>
                   )}
@@ -261,6 +284,13 @@ export default function CartDrawer({
                     ) : (
                       <span>📋 Copy Order Summary</span>
                     )}
+                  </button>
+
+                  <button
+                    onClick={() => setShowPrintSlip(true)}
+                    className="w-full py-2.5 px-4 rounded-full text-xs font-medium border border-divider hover:border-accent text-text-secondary hover:text-text-primary bg-bg-primary transition flex items-center justify-center gap-1.5"
+                  >
+                    <span>🖨️ Print Order Slip / PDF</span>
                   </button>
 
                   <button
@@ -336,38 +366,48 @@ export default function CartDrawer({
                           </button>
                         </div>
                         <p className="text-[11px] text-text-secondary font-mono mt-0.5">
-                          SKU: {item.sku} {item.weight ? `• ${item.weight}` : ""}
+                          SKU: {item.sku} {item.weight ? `• ${item.weight}` : ""} &bull; ₹{item.wholesale_price.toLocaleString("en-IN")}/kg
                         </p>
-                        <div className="flex items-center justify-between mt-2">
-                          <span className="text-xs font-semibold text-text-primary">
-                            ₹{(item.wholesale_price * item.quantity).toLocaleString("en-IN")}
-                          </span>
+                        {(() => {
+                          const calc = calculateItemPrice(item.quantity, item.wholesale_price, item.weight);
+                          return (
+                            <div className="flex items-center justify-between mt-2">
+                              <div>
+                                <span className="text-xs font-bold text-text-primary block">
+                                  ₹{calc.estimatedPrice.toLocaleString("en-IN")}
+                                </span>
+                                <span className="text-[10px] text-text-secondary font-mono">
+                                  ~{calc.totalGrams}g ({calc.totalPairs} pairs)
+                                </span>
+                              </div>
 
-                          {/* Quantity Controls */}
-                          <div className="flex items-center gap-1.5 bg-bg-alt border border-divider rounded-lg px-2 py-0.5">
-                            <button
-                              onClick={() =>
-                                updateQuantity(item.anklet_id, item.quantity - 1)
-                              }
-                              className="text-text-secondary hover:text-text-primary text-xs px-1"
-                              title="Decrease"
-                            >
-                              -
-                            </button>
-                            <span className="text-xs font-semibold text-text-primary min-w-[20px] text-center">
-                              {item.quantity}
-                            </span>
-                            <button
-                              onClick={() =>
-                                updateQuantity(item.anklet_id, item.quantity + 1)
-                              }
-                              className="text-text-secondary hover:text-text-primary text-xs px-1"
-                              title="Increase"
-                            >
-                              +
-                            </button>
-                          </div>
-                        </div>
+                              {/* Quantity Controls in DOZENS */}
+                              <div className="flex items-center gap-1.5 bg-bg-alt border border-divider rounded-lg px-2 py-0.5">
+                                <button
+                                  onClick={() =>
+                                    updateQuantity(item.anklet_id, item.quantity - 1)
+                                  }
+                                  className="text-text-secondary hover:text-text-primary text-xs px-1 font-bold"
+                                  title="Decrease 1 dozen"
+                                >
+                                  -
+                                </button>
+                                <span className="text-xs font-semibold text-text-primary min-w-[28px] text-center font-mono">
+                                  {item.quantity} dz
+                                </span>
+                                <button
+                                  onClick={() =>
+                                    updateQuantity(item.anklet_id, item.quantity + 1)
+                                  }
+                                  className="text-text-secondary hover:text-text-primary text-xs px-1 font-bold"
+                                  title="Increase 1 dozen"
+                                >
+                                  +
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
                     </div>
                   ))}
@@ -441,33 +481,49 @@ export default function CartDrawer({
             <div className="p-5 border-t border-divider bg-bg-alt/70 space-y-3">
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between text-text-secondary">
-                  <span>Total Pairs:</span>
-                  <span className="font-semibold text-text-primary">{totalItems} pairs</span>
+                  <span>Total Quantity:</span>
+                  <span className="font-semibold text-text-primary">
+                    {totalDozens} dozen ({totalPairs} pairs)
+                  </span>
                 </div>
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-text-secondary">
+                  <span>Total Batch Net Weight:</span>
+                  <span className="font-semibold font-mono text-text-primary">
+                    ~{totalWeightGrams.toLocaleString("en-IN")}g ({totalWeightKg} kg)
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm pt-1 border-t border-divider">
                   <span className="font-medium text-text-secondary">
                     Estimated Wholesale Value:
                   </span>
-                  <span className="font-bold text-text-primary">
+                  <span className="font-bold text-text-primary text-base">
                     ₹{totalAmount.toLocaleString("en-IN")}
                   </span>
                 </div>
                 <p className="text-[10px] text-text-secondary">
-                  * Final bill includes GST (3%) and standard dispatch freight from Chowk Bazar, Mathura.
+                  * Calculated on total batch weight @ wholesale rate per kg. Final bill includes GST (3%) &amp; dispatch freight from Chowk Bazar, Mathura.
                 </p>
               </div>
 
               <button
                 onClick={handleCheckout}
                 disabled={submitting}
-                className="btn btn-primary w-full py-3.5 text-xs font-semibold tracking-wide disabled:opacity-50"
+                className="btn btn-primary w-full py-3.5 text-xs font-semibold tracking-wide disabled:opacity-50 shadow-md"
               >
-                {submitting ? "Placing Wholesale Order..." : "Confirm & Send Wholesale Order"}
+                {submitting ? "Placing Wholesale Order..." : `Confirm & Send ${totalDozens} Dozen Order`}
               </button>
             </div>
           )}
         </div>
       </div>
+
+      {/* Printable Slip Modal */}
+      {showPrintSlip && submittedOrder?.printableData && (
+        <OrderPrintModal
+          order={submittedOrder.printableData}
+          onClose={() => setShowPrintSlip(false)}
+        />
+      )}
     </div>
   );
 }

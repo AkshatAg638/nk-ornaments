@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { AuthSession } from "@/lib/types";
 import { useCart } from "@/context/CartContext";
@@ -63,8 +64,15 @@ export default function Header({ settings, session }: HeaderProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           {/* Brand Logo & Name */}
           <Link href="/" className="flex items-center gap-3.5 group">
-            <div className="w-10 h-10 rounded-xl bg-accent text-bg-primary flex items-center justify-center font-bold text-sm tracking-widest transition-all duration-300 group-hover:bg-accent-hover shadow-xs">
-              NK
+            <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden border border-accent/40 shadow-xs transition-transform duration-300 group-hover:scale-105 shrink-0 bg-bg-alt">
+              <Image
+                src="/brand-logo.png"
+                alt="N.K. Ornaments"
+                fill
+                sizes="48px"
+                className="object-cover"
+                priority
+              />
             </div>
             <div className="flex flex-col">
               <span
@@ -217,8 +225,14 @@ export default function Header({ settings, session }: HeaderProps) {
           {/* Mobile menu header */}
           <div className="flex items-center justify-between px-5 py-5 border-b border-divider">
             <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-accent text-bg-primary flex items-center justify-center font-bold text-sm">
-                NK
+              <div className="relative w-9 h-9 rounded-full overflow-hidden border border-accent/40 shrink-0 bg-bg-alt">
+                <Image
+                  src="/brand-logo.png"
+                  alt="N.K. Ornaments"
+                  fill
+                  sizes="36px"
+                  className="object-cover"
+                />
               </div>
               <span
                 className="font-semibold text-base text-text-primary"

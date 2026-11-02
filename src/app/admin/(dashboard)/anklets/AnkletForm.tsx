@@ -414,16 +414,19 @@ export default function AnkletForm({
 
               <div>
                 <label className="block text-xs font-medium text-text-primary mb-1">
-                  ⚖️ Weight (Grams / Pair) *
+                  ⚖️ Weight per Pair (Grams) *
                 </label>
                 <input
                   type="text"
                   required
                   value={weight}
                   onChange={(e) => setWeight(e.target.value)}
-                  placeholder="e.g. 45g, 65g, 85g / pair"
+                  placeholder="e.g. 30g, 45g, 65g"
                   className="input-pearl w-full text-xs"
                 />
+                <span className="text-[10px] text-text-secondary mt-1 block">
+                  Calibrated weight for 1 single pair. (1 dozen = 12 pairs).
+                </span>
               </div>
 
               <div>
@@ -573,20 +576,24 @@ export default function AnkletForm({
 
             <div>
               <label className="block text-xs font-medium text-text-secondary mb-1">
-                Wholesale Price (₹ INR / pair) *
+                Wholesale Metal Rate (₹ INR / kg) *
               </label>
-              <input
-                type="number"
-                min="0"
-                step="5"
-                required
-                value={wholesalePrice}
-                onChange={(e) => setWholesalePrice(e.target.value)}
-                placeholder="2500"
-                className="input-pearl w-full text-xs font-medium text-text-primary"
-              />
-              <span className="text-[10px] text-text-secondary mt-1 block">
-                Wholesale rate shown to authorized buyers. No minimum order quantity restrictions required.
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-text-secondary font-medium">₹</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="10"
+                  required
+                  value={wholesalePrice}
+                  onChange={(e) => setWholesalePrice(e.target.value)}
+                  placeholder="3000"
+                  className="input-pearl w-full pl-7 text-xs font-medium text-text-primary"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-text-secondary font-medium">/ kg</span>
+              </div>
+              <span className="text-[10px] text-text-secondary mt-1.5 block">
+                Rate per kg of German Silver alloy. Final order price is automatically computed as: <strong className="text-text-primary">Total Weight (kg) &times; Rate/kg</strong> based on ordered dozens (1 dz = 12 pairs).
               </span>
             </div>
           </div>

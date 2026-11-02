@@ -11,6 +11,7 @@ import {
   isLowStock,
   isOutOfStock,
 } from "@/lib/types";
+import { calculateItemPrice } from "@/lib/pricing";
 
 interface AnkletModalProps {
   anklet: AnkletWithImages | null;
@@ -98,14 +99,14 @@ export default function AnkletModal({
 
   const activeImage = images[selectedImageIndex] || images[0];
 
+  const pricing = anklet
+    ? calculateItemPrice(orderQuantity, anklet.wholesale_price, anklet.weight)
+    : null;
+
   function handleAddToOrder() {
     if (!anklet) return;
     if (orderQuantity < 1) {
-      alert("Please select at least 1 pair.");
-      return;
-    }
-    if (anklet.stock_quantity && orderQuantity > anklet.stock_quantity) {
-      alert(`Requested quantity exceeds available stock (${anklet.stock_quantity} pairs).`);
+      alert("Please select at least 1 dozen (12 pairs).");
       return;
     }
     addItem(anklet, orderQuantity);
@@ -250,18 +251,18 @@ export default function AnkletModal({
               </div>
 
               {/* Price Banner */}
-              <div className="p-4 rounded-xl bg-bg-alt border border-divider">
+              <div className="p-4 rounded-xl bg-bg-alt border border-divider space-y-2">
                 <div className="flex items-baseline justify-between">
                   <div>
                     <span className="text-caption text-text-secondary uppercase tracking-widest block font-medium">
-                      Direct Wholesale Rate
+                      Wholesale Metal Rate
                     </span>
                     {canViewPrice ? (
                       <div className="flex items-baseline gap-2 mt-0.5">
                         <span className="text-2xl font-bold text-text-primary">
                           {formatINR(anklet.wholesale_price)}
                         </span>
-                        <span className="text-xs text-text-secondary">/ pair</span>
+                        <span className="text-xs font-semibold text-text-secondary">/ kg</span>
                       </div>
                     ) : (
                       <div className="mt-1 flex items-center gap-1.5 text-accent font-medium text-sm">
@@ -270,12 +271,24 @@ export default function AnkletModal({
                     )}
                   </div>
 
-                  {!canViewPrice && (
-                    <span className="text-[11px] text-text-secondary">
-                      Registered trade buyers only
-                    </span>
+                  {canViewPrice && pricing && (
+                    <div className="text-right">
+                      <span className="text-[10px] text-text-secondary uppercase tracking-wider block font-medium">
+                        1 Dozen (12 pairs) Est.
+                      </span>
+                      <span className="text-sm font-semibold text-text-primary">
+                        ~{formatINR(pricing.pricePerDozen)}
+                      </span>
+                    </div>
                   )}
                 </div>
+
+                {canViewPrice && pricing && (
+                  <div className="pt-2 border-t border-divider/60 flex flex-wrap items-center justify-between text-[11px] text-text-secondary gap-1">
+                    <span>1 dz = 12 pairs • Calibrated weight: <strong className="text-text-primary">{pricing.gramsPerPair}g / pair</strong></span>
+                    <span>~{pricing.gramsPerPair * 12}g / dz</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -283,7 +296,7 @@ export default function AnkletModal({
             <div className="pt-4 border-t border-divider">
               {orderSuccess && (
                 <div className="mb-3 p-3 bg-status-in-stock-bg border border-status-in-stock/25 rounded-xl text-xs text-status-in-stock-text text-center font-medium">
-                  ✓ Added {orderQuantity} pairs of {anklet.name} to order list!
+                  ✓ Added {orderQuantity} dozen ({orderQuantity * 12} pairs) of {anklet.name} to order list!
                 </div>
               )}
 
@@ -295,8 +308,14 @@ export default function AnkletModal({
                 /* Customer / Admin Order Controls */
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-4">
-                    <span className="text-xs text-text-secondary font-medium">Quantity (Pairs):</span>
-                    <div className="flex items-center gap-2">
+                    <div>
+                      <span className="text-xs text-text-primary font-semibold block">Order Quantity (Dozens):</span>
+                      <span className="text-[11px] text-text-secondary">
+                        = {orderQuantity * 12} pairs &bull; ~{pricing?.totalGrams}g ({pricing?.totalKg} kg)
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
                       <button
                         type="button"
                         onClick={() =>
@@ -305,49 +324,37 @@ export default function AnkletModal({
                           )
                         }
                         className="w-8 h-8 rounded-lg bg-bg-primary hover:bg-bg-alt text-text-primary font-bold text-sm flex items-center justify-center transition border border-divider"
+                        title="Decrease 1 dozen"
                       >
                         -
                       </button>
-                      <input
-                        type="number"
-                        min={1}
-                        max={anklet.stock_quantity || 9999}
-                        value={orderQuantity}
-                        onChange={(e) =>
-                          setOrderQuantity(
-                            Math.max(1, parseInt(e.target.value) || 1)
-                          )
-                        }
-                        className="w-16 px-2 py-1.5 text-center font-semibold text-text-primary bg-bg-primary border border-divider rounded-lg text-xs focus:border-accent outline-none"
-                      />
+                      <div className="px-3 py-1 bg-bg-primary border border-divider rounded-lg font-mono font-bold text-xs text-text-primary text-center min-w-[64px]">
+                        {orderQuantity} dz
+                      </div>
                       <button
                         type="button"
-                        onClick={() =>
-                          setOrderQuantity((q) =>
-                            Math.min(anklet.stock_quantity, q + 1)
-                          )
-                        }
+                        onClick={() => setOrderQuantity((q) => q + 1)}
                         className="w-8 h-8 rounded-lg bg-bg-primary hover:bg-bg-alt text-text-primary font-bold text-sm flex items-center justify-center transition border border-divider"
+                        title="Increase 1 dozen"
                       >
                         +
                       </button>
-                      <span className="text-xs text-text-secondary">pairs</span>
                     </div>
                   </div>
 
                   <button
                     type="button"
                     onClick={handleAddToOrder}
-                    className="btn btn-primary w-full py-3.5 text-xs tracking-wide"
+                    className="btn btn-primary w-full py-3.5 text-xs tracking-wide font-semibold shadow-md"
                   >
-                    Add {orderQuantity} Pairs to Wholesale Order &bull; {formatINR(anklet.wholesale_price * orderQuantity)}
+                    Add {orderQuantity} Dozen ({orderQuantity * 12} Pairs) &bull; {pricing ? formatINR(pricing.estimatedPrice) : ""}
                   </button>
 
                   <a
                     href={`https://wa.me/919837755055?text=${encodeURIComponent(
                       `Hello Sachin ji, I am inquiring about *${anklet.name}* (SKU: ${anklet.sku}${
                         anklet.weight ? `, Weight: ${anklet.weight}` : ""
-                      }) on N.K. Ornaments. Could you please share the current wholesale rate and dispatch availability?`
+                      }) on N.K. Ornaments. Could you please share the current wholesale rate per kg and dispatch schedule?`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -362,19 +369,54 @@ export default function AnkletModal({
               ) : (
                 /* Visitor: Can add to order draft or register */
                 <div className="space-y-2.5">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <span className="text-xs text-text-primary font-semibold block">Order Quantity (Dozens):</span>
+                      <span className="text-[11px] text-text-secondary">
+                        = {orderQuantity * 12} pairs &bull; ~{pricing?.totalGrams}g ({pricing?.totalKg} kg)
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setOrderQuantity((q) =>
+                            Math.max(1, q - 1)
+                          )
+                        }
+                        className="w-8 h-8 rounded-lg bg-bg-primary hover:bg-bg-alt text-text-primary font-bold text-sm flex items-center justify-center transition border border-divider"
+                        title="Decrease 1 dozen"
+                      >
+                        -
+                      </button>
+                      <div className="px-3 py-1 bg-bg-primary border border-divider rounded-lg font-mono font-bold text-xs text-text-primary text-center min-w-[64px]">
+                        {orderQuantity} dz
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setOrderQuantity((q) => q + 1)}
+                        className="w-8 h-8 rounded-lg bg-bg-primary hover:bg-bg-alt text-text-primary font-bold text-sm flex items-center justify-center transition border border-divider"
+                        title="Increase 1 dozen"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
                   <button
                     type="button"
                     onClick={handleAddToOrder}
-                    className="btn btn-primary w-full py-3.5 text-xs tracking-wide"
+                    className="btn btn-primary w-full py-3.5 text-xs tracking-wide font-semibold shadow-md"
                   >
-                    Add {orderQuantity} Pairs to Wholesale Order Draft
+                    Add {orderQuantity} Dozen ({orderQuantity * 12} Pairs) to Order Draft &bull; {pricing ? formatINR(pricing.estimatedPrice) : ""}
                   </button>
 
                   <a
                     href={`https://wa.me/919837755055?text=${encodeURIComponent(
                       `Hello Sachin ji, I am inquiring about *${anklet.name}* (SKU: ${anklet.sku}${
                         anklet.weight ? `, Weight: ${anklet.weight}` : ""
-                      }) on N.K. Ornaments. Could you please share the current wholesale rate and dispatch availability?`
+                      }) on N.K. Ornaments. Could you please share the current wholesale rate per kg and dispatch schedule?`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"

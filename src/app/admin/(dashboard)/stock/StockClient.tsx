@@ -212,7 +212,7 @@ export default function StockClient({
             <thead className="bg-bg-alt border-b border-divider text-text-secondary font-medium uppercase tracking-wider text-[11px]">
               <tr>
                 <th className="py-3.5 px-4 sm:px-6">Anklet Details</th>
-                <th className="py-3.5 px-4">Wholesale Rate</th>
+                <th className="py-3.5 px-4">Rate (₹/kg)</th>
                 <th className="py-3.5 px-4 text-center">Stock Quantity (Pairs)</th>
                 <th className="py-3.5 px-4 text-center">Low-Stock Mark</th>
                 <th className="py-3.5 px-4 text-center">Manual Out-of-Stock</th>
@@ -272,6 +272,9 @@ export default function StockClient({
                       {/* Wholesale Rate */}
                       <td className="py-3 px-4 font-serif text-sm font-medium text-text-primary">
                         {formatINR(item.wholesale_price)}
+                        <span className="text-[10px] text-text-secondary font-sans font-normal block">
+                          / kg
+                        </span>
                       </td>
 
                       {/* Stock Quantity Input */}

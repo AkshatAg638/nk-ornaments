@@ -2,33 +2,42 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { AnkletWithImages } from "@/lib/types";
+import {
+  calculateItemPrice,
+  calculateItemWeight,
+  PAIRS_PER_DOZEN,
+} from "@/lib/pricing";
 
 export interface CartItem {
   anklet_id: string;
   name: string;
   sku: string;
-  wholesale_price: number;
-  quantity: number;
+  wholesale_price: number; // Rate per kg (₹/kg)
+  quantity: number; // Number of dozens (e.g. 1 = 1 dz = 12 pairs)
   min_order_qty: number;
   image_url: string;
-  weight?: string | null;
+  weight?: string | null; // Weight per pair (e.g. "30g / pair")
 }
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (anklet: AnkletWithImages, quantity?: number) => void;
-  updateQuantity: (ankletId: string, quantity: number) => void;
+  addItem: (anklet: AnkletWithImages, quantityDozens?: number) => void;
+  updateQuantity: (ankletId: string, quantityDozens: number) => void;
   removeItem: (ankletId: string) => void;
   clearCart: () => void;
-  totalItems: number;
-  totalAmount: number;
+  totalDozens: number;
+  totalPairs: number;
+  totalWeightGrams: number;
+  totalWeightKg: number;
+  totalItems: number; // total dozens for navbar badge
+  totalAmount: number; // calculated based on total weight * rate/kg
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-const CART_STORAGE_KEY = "nk_wholesale_cart_v1";
+const CART_STORAGE_KEY = "nk_wholesale_cart_v2";
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -59,8 +68,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [items, mounted]);
 
-  const addItem = (anklet: AnkletWithImages, qty?: number) => {
-    const addQty = qty !== undefined && qty > 0 ? qty : 1;
+  const addItem = (anklet: AnkletWithImages, qtyDozens?: number) => {
+    const addDozens = qtyDozens !== undefined && qtyDozens > 0 ? qtyDozens : 1;
     const primaryImg =
       anklet.images?.find((img) => img.is_primary)?.public_url ||
       anklet.images?.[0]?.public_url ||
@@ -71,7 +80,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (existing) {
         return prev.map((item) =>
           item.anklet_id === anklet.id
-            ? { ...item, quantity: item.quantity + addQty }
+            ? { ...item, quantity: item.quantity + addDozens }
             : item
         );
       }
@@ -82,7 +91,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           name: anklet.name,
           sku: anklet.sku,
           wholesale_price: anklet.wholesale_price,
-          quantity: addQty,
+          quantity: addDozens,
           min_order_qty: 1,
           image_url: primaryImg,
           weight: anklet.weight,
@@ -93,15 +102,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setIsOpen(true);
   };
 
-  const updateQuantity = (ankletId: string, quantity: number) => {
+  const updateQuantity = (ankletId: string, quantityDozens: number) => {
     setItems((prev) =>
       prev
         .map((item) => {
           if (item.anklet_id === ankletId) {
-            if (quantity <= 0) return null;
+            if (quantityDozens <= 0) return null;
             return {
               ...item,
-              quantity: Math.max(1, quantity),
+              quantity: Math.max(1, quantityDozens),
             };
           }
           return item;
@@ -118,11 +127,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems([]);
   };
 
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalAmount = items.reduce(
-    (sum, item) => sum + item.wholesale_price * item.quantity,
+  const totalDozens = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPairs = totalDozens * PAIRS_PER_DOZEN;
+  const totalWeightGrams = items.reduce(
+    (sum, item) =>
+      sum + calculateItemWeight(item.quantity, item.weight).totalGrams,
     0
   );
+  const totalWeightKg = Number((totalWeightGrams / 1000).toFixed(3));
+  const totalAmount = items.reduce(
+    (sum, item) =>
+      sum +
+      calculateItemPrice(item.quantity, item.wholesale_price, item.weight)
+        .estimatedPrice,
+    0
+  );
+  const totalItems = totalDozens;
 
   return (
     <CartContext.Provider
@@ -132,6 +152,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         updateQuantity,
         removeItem,
         clearCart,
+        totalDozens,
+        totalPairs,
+        totalWeightGrams,
+        totalWeightKg,
         totalItems,
         totalAmount,
         isOpen,

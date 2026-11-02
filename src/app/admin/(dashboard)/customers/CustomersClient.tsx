@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Customer } from "@/lib/types";
+import { exportCustomersToCSV } from "@/lib/exportCsv";
 
 interface CustomersClientProps {
   initialCustomers: Customer[];
@@ -64,6 +65,19 @@ export default function CustomersClient({
           <p className="text-xs sm:text-sm text-text-secondary mt-1">
             Registered wholesale jewelry businesses, GSTIN verifications, and delivery addresses.
           </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => exportCustomersToCSV(filtered, "NK_Ornaments_Wholesale_Retailers")}
+            className="btn btn-outline text-xs py-2 px-3.5 flex items-center gap-1.5 shadow-sm"
+            title="Export customer list to CSV for Excel or CRM"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>Export to CSV ({filtered.length})</span>
+          </button>
         </div>
       </div>
 

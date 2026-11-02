@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AuthSession, OrderWithDetails, formatINR } from "@/lib/types";
+import OrderPrintModal from "@/components/common/OrderPrintModal";
+import { calculateItemPrice, PAIRS_PER_DOZEN } from "@/lib/pricing";
 
 interface AccountClientProps {
   session: AuthSession;
@@ -18,6 +20,7 @@ export default function AccountClient({
 }: AccountClientProps) {
   const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
+  const [printingOrder, setPrintingOrder] = useState<OrderWithDetails | null>(null);
 
   const cleanWhatsApp = whatsappNumber.replace(/[^0-9]/g, "");
   const customer = session.customerProfile;
@@ -187,12 +190,19 @@ export default function AccountClient({
           ) : (
             <div className="space-y-4">
               {orders.map((order) => {
-                const totalPairs = order.items?.reduce(
+                const totalDozens = order.items?.reduce(
                   (sum, i) => sum + i.quantity,
                   0
                 ) || 0;
+                const totalPairs = totalDozens * PAIRS_PER_DOZEN;
                 const orderTotal = order.items?.reduce(
-                  (sum, i) => sum + i.price_snapshot * i.quantity,
+                  (sum, i) =>
+                    sum +
+                    calculateItemPrice(
+                      i.quantity,
+                      i.price_snapshot,
+                      i.anklet?.weight
+                    ).estimatedPrice,
                   0
                 ) || 0;
 
@@ -226,9 +236,17 @@ export default function AccountClient({
                           {order.status}
                         </span>
 
+                        <button
+                          onClick={() => setPrintingOrder(order)}
+                          className="px-2.5 py-1 rounded-full text-[11px] font-medium bg-bg-alt hover:bg-surface-elevated text-text-primary border border-divider hover:border-accent flex items-center gap-1 transition-all duration-200"
+                          title="Print Wholesale Estimate / Packing Slip"
+                        >
+                          <span>🖨️ Slip</span>
+                        </button>
+
                         <a
                           href={`https://wa.me/${cleanWhatsApp}?text=${encodeURIComponent(
-                            `Hello Sachin ji, tracking update requested for wholesale Order #${order.order_number} (${totalPairs} pairs). Please share the current dispatch or transport consignment details.`
+                            `Hello Sachin ji, tracking update requested for wholesale Order #${order.order_number} (${totalDozens} dz / ${totalPairs} pairs). Please share the current dispatch or transport consignment details.`
                           )}`}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -242,30 +260,40 @@ export default function AccountClient({
 
                     {/* Order Items */}
                     <div className="space-y-2">
-                      {order.items?.map((item) => (
-                        <div
-                          key={item.id}
-                          className="flex items-center justify-between text-xs py-1.5 border-b border-divider/40 last:border-b-0 text-text-secondary"
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono font-semibold text-accent">
-                              {item.quantity}x
-                            </span>
-                            <span className="font-medium text-text-primary">
-                              {item.anklet_name_snapshot}
+                      {order.items?.map((item) => {
+                        const calc = calculateItemPrice(
+                          item.quantity,
+                          item.price_snapshot,
+                          item.anklet?.weight
+                        );
+                        return (
+                          <div
+                            key={item.id}
+                            className="flex items-center justify-between text-xs py-1.5 border-b border-divider/40 last:border-b-0 text-text-secondary"
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono font-semibold text-accent">
+                                {item.quantity} dz
+                              </span>
+                              <span className="font-medium text-text-primary">
+                                {item.anklet_name_snapshot}
+                              </span>
+                              <span className="text-[11px] text-text-secondary">
+                                ({calc.totalPairs} pairs &bull; ~{calc.totalGrams}g)
+                              </span>
+                            </div>
+                            <span className="font-mono font-medium text-text-primary">
+                              {formatINR(calc.estimatedPrice)}
                             </span>
                           </div>
-                          <span className="font-mono font-medium text-text-primary">
-                            {formatINR(item.price_snapshot * item.quantity)}
-                          </span>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
 
                     {/* Order Footer */}
                     <div className="flex items-center justify-between pt-3 border-t border-divider text-xs">
                       <span className="text-text-secondary">
-                        Total Quantity: <strong className="text-text-primary font-medium">{totalPairs} pairs</strong>
+                        Total Quantity: <strong className="text-text-primary font-medium">{totalDozens} dz ({totalPairs} pairs)</strong>
                       </span>
                       <div>
                         <span className="text-text-secondary mr-2">Estimated Value:</span>
@@ -287,6 +315,14 @@ export default function AccountClient({
           )}
         </div>
       </div>
+
+      {/* Printable Slip Modal */}
+      {printingOrder && (
+        <OrderPrintModal
+          order={printingOrder}
+          onClose={() => setPrintingOrder(null)}
+        />
+      )}
     </div>
   );
 }

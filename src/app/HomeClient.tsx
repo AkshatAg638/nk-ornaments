@@ -386,9 +386,12 @@ export default function HomeClient({
                           Wholesale Rate
                         </span>
                         {canViewPrice ? (
-                          <span className="text-sm font-semibold text-text-primary">
-                            {formatINR(item.wholesale_price)}
-                          </span>
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-sm font-semibold text-text-primary">
+                              {formatINR(item.wholesale_price)}
+                            </span>
+                            <span className="text-[10px] text-text-secondary font-medium">/ kg</span>
+                          </div>
                         ) : (
                           <span className="text-xs font-medium text-accent">
                             🔒 Login to View

@@ -154,8 +154,8 @@ export default function AnkletsClient({
               <tr>
                 <th className="py-3.5 px-4 sm:px-6">Product</th>
                 <th className="py-3.5 px-4">Category</th>
-                <th className="py-3.5 px-4">Wholesale Price</th>
-                <th className="py-3.5 px-4">⚖️ Weight</th>
+                <th className="py-3.5 px-4">Rate (₹/kg)</th>
+                <th className="py-3.5 px-4">⚖️ Weight (Pair)</th>
                 <th className="py-3.5 px-4">Stock Status</th>
                 <th className="py-3.5 px-4 text-center">Live Status</th>
                 <th className="py-3.5 px-4 sm:px-6 text-right">Actions</th>
@@ -213,7 +213,7 @@ export default function AnkletsClient({
                       <td className="py-3.5 px-4 font-serif text-sm font-medium text-text-primary">
                         {formatINR(item.wholesale_price)}
                         <span className="text-[10px] text-text-secondary font-sans font-normal block">
-                          per pair
+                          / kg
                         </span>
                       </td>
 
