@@ -117,11 +117,10 @@ export default function VarietiesClient({
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-divider">
         <button
           onClick={() => setActiveCategory("all")}
-          className={`whitespace-nowrap transition ${
-            activeCategory === "all"
+          className={`whitespace-nowrap transition ${activeCategory === "all"
               ? "btn btn-primary btn-sm"
               : "btn btn-outline btn-sm"
-          }`}
+            }`}
         >
           All Collections ({anklets.filter((a) => a.is_active).length})
         </button>
@@ -134,11 +133,10 @@ export default function VarietiesClient({
             <button
               key={c.id}
               onClick={() => setActiveCategory(c.slug)}
-              className={`whitespace-nowrap transition ${
-                activeCategory === c.slug
+              className={`whitespace-nowrap transition ${activeCategory === c.slug
                   ? "btn btn-primary btn-sm"
                   : "btn btn-outline btn-sm"
-              }`}
+                }`}
             >
               {c.name} ({count})
             </button>
@@ -236,19 +234,18 @@ export default function VarietiesClient({
                     {/* Stock Badge */}
                     <div className="absolute top-3 left-3">
                       <span
-                        className={`badge ${
-                          isOut
+                        className={`badge ${isOut
                             ? "badge-out-of-stock"
                             : isLow
-                            ? "badge-low-stock"
-                            : "badge-in-stock"
-                        }`}
+                              ? "badge-low-stock"
+                              : "badge-in-stock"
+                          }`}
                       >
                         {isOut
                           ? "Out of Stock"
                           : isLow
-                          ? "Low Stock"
-                          : "In Stock"}
+                            ? "Low Stock"
+                            : "In Stock"}
                       </span>
                     </div>
 
